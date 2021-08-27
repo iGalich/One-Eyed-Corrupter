@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+#if (UNITY_EDITOR)
 [InitializeOnLoad]
 static class FullscreenShortcut
 {
@@ -24,3 +25,4 @@ static class FullscreenShortcut
         return Input.GetKey(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift);
     }
 }
+#endif
