@@ -10,18 +10,18 @@ public abstract class Mover : Fighter
 
     protected RaycastHit2D hit;
 
-    [SerializeField] protected float ySpeed = 0.75f;
-    [SerializeField] protected float xSpeed = 1.0f;
+    [SerializeField] protected float moveSpeed = 1.0f;
+    //[SerializeField] protected float xSpeed = 1.0f;
 
     protected virtual void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    protected virtual void UpdateMotor (Vector3 input)
+    protected virtual void UpdateMotor(Vector3 input)
     {
         // Reset moveDelta
-        moveDelta = new Vector3(input.x * xSpeed, input.y * ySpeed, 0);
+        moveDelta = new Vector3(input.x * moveSpeed, input.y * moveSpeed, 0);
 
         // Swap sprite direction, right or left
         if (moveDelta.x > 0)

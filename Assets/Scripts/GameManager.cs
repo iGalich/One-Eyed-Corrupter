@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
         instance = this;
         SceneManager.sceneLoaded += LoadState;
-        //DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     // logic
@@ -110,11 +110,12 @@ public class GameManager : MonoBehaviour
     {
         ShowText("Level Up!", 50, Color.yellow, transform.position, Vector3.up * 35, 1.5f);
         player.OnLevelUp();
+        OnHitpointChange();
     }
     public void GrantPesos(int pesosAmount)
     {
         pesos += pesosAmount;
-        GameManager.instance.ShowText("+" + pesosAmount + " pesos!", 40, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
+        GameManager.instance.ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
     }
     // save state
     /* INT preferedSkin
@@ -122,6 +123,10 @@ public class GameManager : MonoBehaviour
      * INT experience
      * INT weaponLevel
      */
+    public void OnSceneLoaded(Scene s, LoadSceneMode mode)
+    {
+        player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+    }
     public void SaveState()
     {
         string s = "";
@@ -135,6 +140,8 @@ public class GameManager : MonoBehaviour
     }
     public void LoadState(Scene s, LoadSceneMode mode)
     {
+        SceneManager.sceneLoaded -= LoadState;
+
         if (!PlayerPrefs.HasKey("SaveState"))
             return;
 
@@ -148,7 +155,5 @@ public class GameManager : MonoBehaviour
             player.SetLevel(GetCurrentLevel());
         //weapon level
         weapon.SetWeaponLevel(int.Parse(data[3]));
-
-        player.transform.position = GameObject.Find("SpawnPoint").transform.position;
     }
 }

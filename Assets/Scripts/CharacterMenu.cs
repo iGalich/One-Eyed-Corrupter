@@ -6,14 +6,14 @@ using UnityEngine.UI;
 public class CharacterMenu : MonoBehaviour
 {
     // text fields
-    public Text levelText, hitpointText, pesosText, upgradeCostText, xpText;
+    [SerializeField] private Text levelText, hitpointText, pesosText, upgradeCostText, xpText;
 
     // logic
     private int currentCharacterSelection = 0;
 
-    public Image characterSelectionSprite, weaponSprite;
+    [SerializeField] private Image characterSelectionSprite, weaponSprite;
 
-    public RectTransform xpBar;
+    [SerializeField] private RectTransform xpBar;
 
     // character selection
     public void OnArrowClick (bool right)
@@ -58,11 +58,12 @@ public class CharacterMenu : MonoBehaviour
     {
         int currLevel = GameManager.instance.GetCurrentLevel();
         //weapon
-        weaponSprite.sprite = GameManager.instance.weaponSprites[GameManager.instance.weapon.weaponLevel];
+        weaponSprite.sprite = GameManager.instance.weaponSprites[GameManager.instance.weapon.weaponLevel + 1];
         if (GameManager.instance.weapon.weaponLevel == GameManager.instance.weaponPrices.Count)
             upgradeCostText.text = "MAX";
         else
             upgradeCostText.text = GameManager.instance.weaponPrices[GameManager.instance.weapon.weaponLevel].ToString();
+
 
         //meta
         levelText.text = currLevel.ToString();

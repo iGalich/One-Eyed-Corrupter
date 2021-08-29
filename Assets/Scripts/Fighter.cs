@@ -8,13 +8,13 @@ public class Fighter : MonoBehaviour
     public int maxHitpoint = 10;
     public float pushRecoverySpeed = 0.2f;
 
-    protected float immuneTime = 1.0f;
+    [SerializeField] protected float immuneTime = 1.0f;
     protected float lastImmune;
 
     protected Vector3 pushDirection;
 
     // all fighers can receive damage and die
-    protected virtual void ReceiveDamage (Damage dmg)
+    protected virtual void ReceiveDamage(Damage dmg)
     {
         if (Time.time - lastImmune > immuneTime)
         {

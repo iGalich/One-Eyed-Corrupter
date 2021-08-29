@@ -23,7 +23,8 @@ public class Player : Mover
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
-        UpdateMotor(new Vector3(x, y, 0));
+
+        UpdateMotor(new Vector3(x, y, 0).normalized);
     }
     public void SwapSprite(int skinId)
     {

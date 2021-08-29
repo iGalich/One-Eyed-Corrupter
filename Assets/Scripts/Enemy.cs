@@ -5,11 +5,11 @@ using UnityEngine;
 public class Enemy : Mover
 {
     // experience worth
-    public int xpValue = 1;
+    [SerializeField] private int xpValue = 1;
 
     // logic
-    public float triggerLength = 1;
-    public float chaseLength = 5;
+    [SerializeField] private float triggerLength = 1;
+    [SerializeField] private float chaseLength = 5;
 
     private bool chasing;
     private bool collidingWithPlayer;
@@ -38,7 +38,7 @@ public class Enemy : Mover
         // is the player in range
         if (Vector3.Distance(playerTransform.position, startingPosition) < chaseLength)
         {
-            if(Vector3.Distance(playerTransform.position, startingPosition) < triggerLength)
+            if (Vector3.Distance(playerTransform.position, startingPosition) < triggerLength)
             {
                 chasing = true;
             }
