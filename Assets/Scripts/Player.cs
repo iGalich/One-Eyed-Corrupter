@@ -7,6 +7,7 @@ public class Player : Mover
 {
     private SpriteRenderer spriteRenderer;
     private bool isAlive = true;
+    [SerializeField] private int minHitPoint = 5;
 
     protected override void Death()
     {
@@ -63,10 +64,10 @@ public class Player : Mover
         GameManager.instance.weapon.SetWeaponLevel(0);
         GameManager.instance.SetXp(0);
         GameManager.instance.SetPesos(0);
-        maxHitpoint -= GameManager.instance.GetCurrentLevel();
-        hitpoint = maxHitpoint;
         isAlive = true;
         lastImmune = Time.time;
         pushDirection = Vector3.zero;
+        maxHitpoint = minHitPoint;
+        hitpoint = maxHitpoint;
     }
 }

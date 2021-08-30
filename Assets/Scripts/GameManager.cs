@@ -16,9 +16,12 @@ public class GameManager : MonoBehaviour
     // references
     public Player player;
     public Weapon weapon;
-    public FloatingTextManager floatingTextManager;
     public RectTransform hitpointBar;
     public Animator deathMenuAnim;
+    public FloatingTextManager floatingTextManager;
+    public GameObject vCam;
+    public GameObject hud;
+    public GameObject menu;
 
     // logic
     public int pesos;
@@ -29,6 +32,9 @@ public class GameManager : MonoBehaviour
         if (GameManager.instance != null)
         {
             Destroy(gameObject);
+            Destroy(player.gameObject);
+            Destroy(floatingTextManager.gameObject);
+            Destroy(vCam.gameObject);
             return;
         }
 
