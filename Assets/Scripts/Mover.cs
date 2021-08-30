@@ -24,13 +24,24 @@ public abstract class Mover : Fighter
         moveDelta = new Vector3(input.x * moveSpeed, input.y * moveSpeed, 0);
 
         // Swap sprite direction, right or left
-        if (moveDelta.x > 0)
-            transform.localScale = Vector3.one;
-        else if (moveDelta.x < 0)
-            transform.localScale = new Vector3(-1, 1, 1);
 
-        // add push vector, if any
-        moveDelta += pushDirection;
+        //-------------OLD---------------------
+        //if (moveDelta.x > 0)
+        //    transform.localScale = Vector3.one;
+        //else if (moveDelta.x < 0)
+        //    transform.localScale = new Vector3(-1, 1, 1);
+
+
+        // -------------NEW----------------
+        Vector3 characterScale = transform.localScale;
+        if (moveDelta.x < 0 && characterScale.x > 0)
+            characterScale.x *= -1;
+        if (moveDelta.x > 0)
+            characterScale.x = Mathf.Abs(characterScale.x);
+        transform.localScale = characterScale;
+
+            // add push vector, if any
+            moveDelta += pushDirection;
 
         //reduce pushforce everyframe, based off recovery speed
         pushDirection = Vector3.Lerp(pushDirection, Vector3.zero, pushRecoverySpeed);

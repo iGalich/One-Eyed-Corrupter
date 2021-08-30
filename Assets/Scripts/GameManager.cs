@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-
     // resources
     public List<Sprite> playerSprites;
     public List<Sprite> weaponSprites;
@@ -16,12 +15,14 @@ public class GameManager : MonoBehaviour
 
     // references
     public Player player;
-
     public Weapon weapon;
-
     public FloatingTextManager floatingTextManager;
-
     public RectTransform hitpointBar;
+    public Animator deathMenuAnim;
+
+    // logic
+    public int pesos;
+    public int experience;
 
     private void Awake()
     {
@@ -35,10 +36,6 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
-
-    // logic
-    public int pesos;
-    public int experience;
 
     //floating text
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
@@ -106,17 +103,36 @@ public class GameManager : MonoBehaviour
         if (currLevel < GetCurrentLevel())
             OnLevelUp();
     }
+    public void SetXp(int xp)
+    {
+        experience = xp;
+    }
     public void OnLevelUp()
     {
         ShowText("Level Up!", 50, Color.yellow, transform.position, Vector3.up * 35, 1.5f);
         player.OnLevelUp();
         OnHitpointChange();
     }
+
+    //grant pesos
     public void GrantPesos(int pesosAmount)
     {
         pesos += pesosAmount;
         GameManager.instance.ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
     }
+    public void SetPesos(int pesosAmount)
+    {
+        pesos = pesosAmount;
+    }
+    
+    //death menu and respawn
+    public void Respawn()
+    {
+        deathMenuAnim.SetTrigger("Hide");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+        player.Respawn();
+    }
+
     // save state
     /* INT preferedSkin
      * INT pesos
