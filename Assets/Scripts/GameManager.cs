@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
             Destroy(player.gameObject);
             Destroy(floatingTextManager.gameObject);
             Destroy(vCam.gameObject);
+            Destroy(menu.gameObject);
+            Destroy(hud.gameObject);
             return;
         }
 

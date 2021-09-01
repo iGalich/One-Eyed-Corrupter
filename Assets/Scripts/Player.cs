@@ -69,5 +69,6 @@ public class Player : Mover
         pushDirection = Vector3.zero;
         maxHitpoint = minHitPoint;
         hitpoint = maxHitpoint;
+        GameManager.instance.OnHitpointChange();
     }
 }
