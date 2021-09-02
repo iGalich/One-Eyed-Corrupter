@@ -16,8 +16,9 @@ public class Weapon : Collidable
     // swing
     private Animator anim;
 
-    [SerializeField] private float cooldown = 0.5f;
     private float lastSwing;
+
+    [SerializeField] private float cooldown = 0.5f;
 
     protected override void Start()
     {
@@ -27,6 +28,8 @@ public class Weapon : Collidable
 
     protected override void Update()
     {
+        if (GameManager.instance.player.DialogueUI.IsOpen) return; // stops swing during dialogue
+
         base.Update();
         if (Input.GetKeyDown(KeyCode.Space))
         {

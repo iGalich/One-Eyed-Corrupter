@@ -40,8 +40,8 @@ public abstract class Mover : Fighter
             characterScale.x = Mathf.Abs(characterScale.x);
         transform.localScale = characterScale;
 
-            // add push vector, if any
-            moveDelta += pushDirection;
+        // add push vector, if any
+        moveDelta += pushDirection;
 
         //reduce pushforce everyframe, based off recovery speed
         pushDirection = Vector3.Lerp(pushDirection, Vector3.zero, pushRecoverySpeed);

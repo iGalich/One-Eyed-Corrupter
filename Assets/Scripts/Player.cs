@@ -7,8 +7,13 @@ public class Player : Mover
 {
     private SpriteRenderer spriteRenderer;
     private bool isAlive = true;
-    [SerializeField] private int minHitPoint = 5;
+    private Rigidbody2D rb;
 
+    [SerializeField] private int minHitPoint = 5;
+    [SerializeField] private DialogueUI dialogueUI;
+
+    public DialogueUI DialogueUI => dialogueUI;
+    public IInteractable Interactable { get; set; }
     protected override void Death()
     {
         isAlive = false;
@@ -16,7 +21,7 @@ public class Player : Mover
     }
     protected override void ReceiveDamage(Damage dmg)
     {
-        if(isAlive)
+        if (isAlive)
         {
             base.ReceiveDamage(dmg);
             GameManager.instance.OnHitpointChange();
@@ -26,10 +31,20 @@ public class Player : Mover
     {
         base.Start();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
         //DontDestroyOnLoad(gameObject);
+    }
+    private void Update()
+    {
+        
+
+        if (Input.GetKeyDown(KeyCode.E))
+            Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
     }
     private void FixedUpdate()
     {
+        if (dialogueUI.IsOpen) return;
+
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
         if (isAlive)

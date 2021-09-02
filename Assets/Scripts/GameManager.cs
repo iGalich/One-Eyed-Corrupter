@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public GameObject vCam;
     public GameObject hud;
     public GameObject menu;
+    public GameObject dialogue;
 
     // logic
     public int pesos;
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
             Destroy(vCam.gameObject);
             Destroy(menu.gameObject);
             Destroy(hud.gameObject);
+            Destroy(dialogue.gameObject);
             return;
         }
 
