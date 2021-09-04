@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Crate : Fighter
 {
+    [SerializeField] private int minAmount = 1, maxAmount = 5;
+
     protected override void Death()
     {
         Destroy(gameObject);
-        int pesosAmount = Random.Range(0, 6);
-        if (pesosAmount != 0)
-            GameManager.instance.GrantPesos(pesosAmount);
+        if (Random.value > 0.5f) // 50\50 coin flip if gets money or not
+            GameManager.instance.GrantPesos(Random.Range(minAmount, maxAmount + 1));
     }
 }
