@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class GameManager : MonoBehaviour
     public GameObject hud;
     public GameObject menu;
     public GameObject dialogue;
+
+    [SerializeField] private Button inventoryButton;
 
     // logic
     public int pesos;
@@ -46,7 +49,10 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
-
+    public void CanClickInvetnory(bool canClick)
+    {
+        inventoryButton.enabled = canClick;
+    }
     //floating text
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
     {

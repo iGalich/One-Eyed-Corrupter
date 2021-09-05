@@ -24,7 +24,13 @@ public class DialogueUI : MonoBehaviour
     {
         IsOpen = true;
         dialogueBox.SetActive(true);
+        GameManager.instance.CanClickInvetnory(false);
         StartCoroutine(StepThroughDialogue(dialogueObject));
+    }
+
+    public void AddResponseEvents(ResponseEvent[] responseEvents)
+    {
+        responseHandler.AddResponseEvents(responseEvents);
     }
 
     private IEnumerator StepThroughDialogue(DialogueObject dialogueObject)
@@ -64,10 +70,11 @@ public class DialogueUI : MonoBehaviour
             }
         }
     }
-    private void CloseDialogueBox()
+    public void CloseDialogueBox()
     {
         IsOpen = false;
         dialogueBox.SetActive(false);
+        GameManager.instance.CanClickInvetnory(true);
         textLabel.text = string.Empty;
     }
 }
