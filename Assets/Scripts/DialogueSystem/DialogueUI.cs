@@ -1,11 +1,14 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class DialogueUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text textLabel;
     [SerializeField] private GameObject dialogueBox;
+    [SerializeField] private Image actorSprite;
+    [SerializeField] private TMP_Text actorName;
 
     public bool IsOpen { get; private set; }
 
@@ -24,6 +27,10 @@ public class DialogueUI : MonoBehaviour
     {
         IsOpen = true;
         dialogueBox.SetActive(true);
+        actorSprite.enabled = true;
+        actorName.enabled = true;
+        actorName.text = "<b>" + dialogueObject.actor.ActorName + ":</b>";
+        actorSprite.sprite = dialogueObject.actor.ActorSprite;
         GameManager.instance.CanClickInvetnory(false);
         StartCoroutine(StepThroughDialogue(dialogueObject));
     }
@@ -56,7 +63,7 @@ public class DialogueUI : MonoBehaviour
         else
             CloseDialogueBox();
     }
-    private IEnumerator RunTypingEffect (string dialogue)
+    private IEnumerator RunTypingEffect(string dialogue)
     {
         typewriterEffect.Run(dialogue, textLabel);
 
@@ -74,7 +81,14 @@ public class DialogueUI : MonoBehaviour
     {
         IsOpen = false;
         dialogueBox.SetActive(false);
+        actorSprite.enabled = false;
+        actorName.enabled = false;
         GameManager.instance.CanClickInvetnory(true);
         textLabel.text = string.Empty;
     }
+
+    //private string ToBold(string line)
+    //{
+    //    line = 
+    //}
 }

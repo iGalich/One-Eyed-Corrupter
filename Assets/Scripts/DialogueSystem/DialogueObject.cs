@@ -6,6 +6,8 @@ public class DialogueObject : ScriptableObject
 {
     [SerializeField] [TextArea] private string[] dialogue;
     [SerializeField] private Response[] responses;
+    
+    public ActorObject actor;
 
     public string[] Dialogue => dialogue;
 

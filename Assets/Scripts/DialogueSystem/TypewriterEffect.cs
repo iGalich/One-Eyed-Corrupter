@@ -43,11 +43,13 @@ public class TypewriterEffect : MonoBehaviour
             charIndex = Mathf.FloorToInt(t);
             charIndex = Mathf.Clamp(charIndex, 0, textToType.Length);
 
+
             for (int i = lastCharIndex; i < charIndex; i++)
             {
                 bool isLast = i >= textToType.Length - 1;
 
                 textLabel.text = textToType.Substring(0, i + 1);
+
 
                 if (IsPunctuation(textToType[i], out float waitTime) && !isLast && !IsPunctuation(textToType[i + 1], out _))
                     yield return new WaitForSeconds(waitTime);

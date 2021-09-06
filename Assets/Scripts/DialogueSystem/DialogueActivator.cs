@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DialogueActivator : MonoBehaviour , IInteractable
+public class DialogueActivator : MonoBehaviour, IInteractable
 {
     [SerializeField] private DialogueObject dialogueObject;
 
@@ -29,7 +29,7 @@ public class DialogueActivator : MonoBehaviour , IInteractable
     {
         foreach (DialogueResponseEvents responseEvents in GetComponents<DialogueResponseEvents>())
         {
-            if(responseEvents.DialogueObject == dialogueObject)
+            if (responseEvents.DialogueObject == dialogueObject)
             {
                 player.DialogueUI.AddResponseEvents(responseEvents.Events);
                 break;
