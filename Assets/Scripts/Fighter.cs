@@ -31,7 +31,6 @@ public class Fighter : MonoBehaviour
             Death();
         }
     }
-
     protected virtual void Death()
     {
         Debug.Log("Death was not implemented in " + this.name);

@@ -25,7 +25,6 @@ public class Weapon : Collidable
         base.Start();
         anim = GetComponent<Animator>();
     }
-
     protected override void Update()
     {
         if (GameManager.instance.player.DialogueUI.IsOpen) return; // stops swing during dialogue
@@ -40,7 +39,6 @@ public class Weapon : Collidable
             }
         }
     }
-
     protected override void OnCollide(Collider2D coll)
     {
         if (coll.tag == "Fighter")
@@ -61,12 +59,10 @@ public class Weapon : Collidable
             coll.SendMessage("ReceiveDamage", dmg);
         }
     }
-
     private void Swing()
     {
         anim.SetTrigger("Swing");
     }
-
     public void UpgradeWeapon()
     {
         weaponLevel++;
@@ -74,7 +70,6 @@ public class Weapon : Collidable
 
         //change stats
     }
-
     public void SetWeaponLevel(int level)
     {
         weaponLevel = level;

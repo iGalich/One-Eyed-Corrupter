@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class is used to indicate the area where an enemy is able to hit the player.
+/// </summary>
 public class EnemyHitbox : Collidable
 {
     // damage

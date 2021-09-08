@@ -8,12 +8,19 @@ public class Player : Mover
     private SpriteRenderer spriteRenderer;
     private bool isAlive = true;
     private Rigidbody2D rb;
+    private ParticleSystem levelUpPaticles;
 
     [SerializeField] private int minHitPoint = 5;
     [SerializeField] private DialogueUI dialogueUI;
 
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
+
+    private void Awake()
+    {
+        levelUpPaticles = GetComponentInChildren<ParticleSystem>();
+        levelUpPaticles.Pause();
+    }
     protected override void Death()
     {
         isAlive = false;
@@ -36,8 +43,6 @@ public class Player : Mover
     }
     private void Update()
     {
-        
-
         if (Input.GetKeyDown(KeyCode.E))
             Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
     }
@@ -54,10 +59,15 @@ public class Player : Mover
     {
         spriteRenderer.sprite = GameManager.instance.playerSprites[skinId];
     }
+    public Sprite GetPlayerSprite()
+    {
+        return spriteRenderer.sprite;
+    }
     public void OnLevelUp()
     {
+        levelUpPaticles.Play();
         maxHitpoint++;
-        hitpoint = maxHitpoint;
+        hitpoint = maxHitpoint; 
     }
     public void SetLevel(int level)
     {

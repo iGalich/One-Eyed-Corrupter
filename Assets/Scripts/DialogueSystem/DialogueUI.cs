@@ -29,8 +29,19 @@ public class DialogueUI : MonoBehaviour
         dialogueBox.SetActive(true);
         actorSprite.enabled = true;
         actorName.enabled = true;
-        actorName.text = "<b>" + dialogueObject.actor.ActorName + ":</b>";
-        actorSprite.sprite = dialogueObject.actor.ActorSprite;
+
+
+        if (dialogueObject.actor == null) // if speaker is Player
+        {
+            actorName.text = "<b>Player:</b>";
+            actorSprite.sprite = GameManager.instance.player.GetPlayerSprite();
+        }
+        else
+        {
+            actorName.text = "<b>" + dialogueObject.actor.ActorName + ":</b>";
+            actorSprite.sprite = dialogueObject.actor.ActorSprite;
+        }
+
         GameManager.instance.CanClickInvetnory(false);
         StartCoroutine(StepThroughDialogue(dialogueObject));
     }
