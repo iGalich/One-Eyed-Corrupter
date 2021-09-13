@@ -7,12 +7,13 @@ public class TypewriterEffect : MonoBehaviour
 {
     [SerializeField] private float typewriterSpeed = 50f;
 
+
     public bool IsRunning { get; private set; }
 
     private readonly List<Punctuation> punctuations = new List<Punctuation>()
     {
         new Punctuation(new HashSet<char>() {'.', '!', '?'}, 0.6f),
-        new Punctuation(new HashSet<char>() {',', ';', ':'}, 0.3f)
+        new Punctuation(new HashSet<char>() {',', ';', ':'}, 0.3f),
     };
 
     private Coroutine typingCoroutine;
@@ -49,8 +50,7 @@ public class TypewriterEffect : MonoBehaviour
                 bool isLast = i >= textToType.Length - 1;
 
                 textLabel.text = textToType.Substring(0, i + 1);
-
-
+                
                 if (IsPunctuation(textToType[i], out float waitTime) && !isLast && !IsPunctuation(textToType[i + 1], out _))
                     yield return new WaitForSeconds(waitTime);
             }

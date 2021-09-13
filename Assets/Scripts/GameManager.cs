@@ -11,19 +11,27 @@ public class GameManager : MonoBehaviour
     // resources
     public List<Sprite> playerSprites;
     public List<Sprite> weaponSprites;
+
     public List<int> weaponPrices;
     public List<int> xpTable;
 
     // references
     public Player player;
+
     public Weapon weapon;
+
     public RectTransform hitpointBar;
+
     public Animator deathMenuAnim;
+
     public FloatingTextManager floatingTextManager;
+
     public GameObject vCam;
     public GameObject hud;
     public GameObject menu;
     public GameObject dialogue;
+    public GameObject playerAfterImagePool;
+    public GameObject audioManager;
 
     [SerializeField] private Button inventoryButton;
 
@@ -33,6 +41,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
+
         if (GameManager.instance != null)
         {
             Destroy(gameObject);
@@ -42,6 +52,8 @@ public class GameManager : MonoBehaviour
             Destroy(menu.gameObject);
             Destroy(hud.gameObject);
             Destroy(dialogue.gameObject);
+            Destroy(playerAfterImagePool.gameObject);
+            Destroy(audioManager.gameObject);
             return;
         }
 
@@ -125,7 +137,7 @@ public class GameManager : MonoBehaviour
     }
     public void OnLevelUp()
     {
-        ShowText("Level Up!", 50, Color.yellow, transform.position, Vector3.up * 35, 1.5f);
+        ShowText("Level " + GameManager.instance.GetCurrentLevel().ToString(), 50, Color.yellow, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 35, 1.5f);
         player.OnLevelUp();
         OnHitpointChange();
     }
@@ -145,7 +157,7 @@ public class GameManager : MonoBehaviour
     public void Respawn()
     {
         deathMenuAnim.SetTrigger("Hide");
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Tutorial");
         player.Respawn();
     }
 

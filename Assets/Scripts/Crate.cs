@@ -6,6 +6,10 @@ public class Crate : Fighter
 {
     [SerializeField] private int minAmount = 1, maxAmount = 5;
 
+    protected override void Start()
+    {
+        if (rb == null) return;
+    }
     protected override void Death()
     {
         Destroy(gameObject);

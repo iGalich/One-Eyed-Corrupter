@@ -41,6 +41,7 @@ public class Enemy : Mover
             if (Vector3.Distance(playerTransform.position, startingPosition) < triggerLength)
             {
                 chasing = true;
+                GameManager.instance.player.SetInCombat(true);
             }
 
             if (chasing)
@@ -59,6 +60,7 @@ public class Enemy : Mover
         {
             UpdateMotor(startingPosition - transform.position);
             chasing = false;
+            GameManager.instance.player.SetInCombat(false);
         }
 
         //check for overlap
@@ -79,10 +81,14 @@ public class Enemy : Mover
             hits[i] = null;
         }
     }
-
+    public int GetXpValue()
+    {
+        return xpValue;
+    }
     protected override void Death()
     {
         Destroy(gameObject);
+        GameManager.instance.player.SetInCombat(false);
         GameManager.instance.GrantXp(xpValue);
         GameManager.instance.ShowText("+" + xpValue + " xp", 35, Color.magenta, transform.position, Vector3.up * 40, 1.0f);
     }

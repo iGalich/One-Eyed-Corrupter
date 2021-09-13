@@ -30,7 +30,7 @@ public class Weapon : Collidable
         if (GameManager.instance.player.DialogueUI.IsOpen) return; // stops swing during dialogue
 
         base.Update();
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0))
         {
             if (Time.time - lastSwing > cooldown)
             {
@@ -55,6 +55,9 @@ public class Weapon : Collidable
                 origin = transform.position,
                 pushForce = pushForce[weaponLevel]
             };
+
+            if (GameManager.instance.player.GetIsDashing())
+                dmg.damageAmount *= 2;
 
             coll.SendMessage("ReceiveDamage", dmg);
         }

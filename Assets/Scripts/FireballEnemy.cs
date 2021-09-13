@@ -15,6 +15,7 @@ public class FireballEnemy : Enemy
     protected override void Death()
     {
         base.Death();
+        fireballBoss.DecreaseFireballCount();
         fireballBoss.IncreaseFireballSpeed(addSpeed);
     }
 }
