@@ -35,6 +35,14 @@ public class HomingMissle : MonoBehaviour
 
         rb.velocity = transform.up * speed;
     }
+    private void Update()
+    {
+        if (bossParent.CheckIsDead())
+        {
+            Instantiate(explosionEffect, transform.position, transform.rotation);
+            Destroy(gameObject);
+        }
+    }
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.name == "Player")
@@ -51,7 +59,7 @@ public class HomingMissle : MonoBehaviour
 
             Instantiate(explosionEffect, transform.position, transform.rotation);
             bossParent.SetLastMissleTime();
-            //bossParent.SetActiveMissleExists(false);
+            bossParent.SetActiveMissleExists(false);
             Destroy(gameObject);
         }
     }

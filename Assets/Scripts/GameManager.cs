@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public Weapon weapon;
 
     public RectTransform hitpointBar;
+    [SerializeField] private RectTransform decayingBar;
 
     public Animator deathMenuAnim;
 
@@ -60,6 +61,19 @@ public class GameManager : MonoBehaviour
         instance = this;
         SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        UpdateSceneMusicPlayer();
+    }
+    private void Update()
+    {
+        SyncBar();
+    }
+    private void SyncBar()
+    {
+        if (decayingBar.localScale.y != hitpointBar.localScale.y)
+        {
+            decayingBar.localScale = new Vector3(decayingBar.localScale.x, Mathf.Lerp(decayingBar.localScale.y, hitpointBar.localScale.y, Time.deltaTime), decayingBar.localScale.z);
+        }
     }
     public void CanClickInvetnory(bool canClick)
     {
@@ -159,6 +173,8 @@ public class GameManager : MonoBehaviour
         deathMenuAnim.SetTrigger("Hide");
         UnityEngine.SceneManagement.SceneManager.LoadScene("Tutorial");
         player.Respawn();
+        AudioManager.Instance.Mute("PlayerDeath");
+        AudioManager.Instance.Play(AudioManager.Instance.GetCurrentlyPlaying());
     }
 
     // save state
@@ -170,6 +186,7 @@ public class GameManager : MonoBehaviour
     public void OnSceneLoaded(Scene s, LoadSceneMode mode)
     {
         player.transform.position = GameObject.Find("SpawnPoint").transform.position;
+        UpdateSceneMusicPlayer();
     }
     public void SaveState()
     {
@@ -199,5 +216,19 @@ public class GameManager : MonoBehaviour
             player.SetLevel(GetCurrentLevel());
         //weapon level
         weapon.SetWeaponLevel(int.Parse(data[3]));
+    }
+    public void UpdateSceneMusicPlayer()
+    {
+        switch (SceneManager.GetActiveScene().buildIndex)
+        {
+            case 1: AudioManager.Instance.Play("TutorialLevel");
+                break;
+            case 2: AudioManager.Instance.Play("RegularLevel");
+                break;
+            case 3: AudioManager.Instance.Play("BossLevel");
+                break;
+            default: Debug.Log("No music is playing!!!");
+                break;
+        }
     }
 }

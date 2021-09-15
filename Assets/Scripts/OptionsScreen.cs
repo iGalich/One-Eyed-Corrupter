@@ -24,8 +24,8 @@ public class OptionsScreen : MonoBehaviour
     {
         fullscreenToggle.isOn = Screen.fullScreen; //checks if screen is fullscreend or not
 
-        if (QualitySettings.vSyncCount != 0) //makes sure vsyncs is off
-            QualitySettings.vSyncCount = 0;
+        if (QualitySettings.vSyncCount != 0) //makes sure vsyncs is on
+            QualitySettings.vSyncCount = 1;
 
         bool foundRes = false;
         for (int i = 0; i < resolutions.Count; i++)

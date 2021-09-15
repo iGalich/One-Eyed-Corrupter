@@ -90,6 +90,6 @@ public class Enemy : Mover
         Destroy(gameObject);
         GameManager.instance.player.SetInCombat(false);
         GameManager.instance.GrantXp(xpValue);
-        GameManager.instance.ShowText("+" + xpValue + " xp", 35, Color.magenta, transform.position, Vector3.up * 40, 1.0f);
+        GameManager.instance.ShowText("+" + xpValue + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 40, 1.0f);
     }
 }

@@ -10,6 +10,25 @@ public class Crate : Fighter
     {
         if (rb == null) return;
     }
+    protected override void ReceiveDamage(Damage dmg)
+    {
+        if (canBeHit)
+        {
+            lastImmune = Time.time;
+            hitpoint -= dmg.damageAmount;
+            pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
+            GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), new Vector3(0, 0.16f, 0), 0.5f);
+            GameManager.instance.weapon.SetCritTextMulti();
+            GameManager.instance.weapon.SetDashTextMulti();
+        }
+
+
+        if (hitpoint <= 0)
+        {
+            hitpoint = 0;
+            Death();
+        }
+    }
     protected override void Death()
     {
         Destroy(gameObject);

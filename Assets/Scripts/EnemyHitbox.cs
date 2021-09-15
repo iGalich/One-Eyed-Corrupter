@@ -8,8 +8,9 @@ using UnityEngine;
 public class EnemyHitbox : Collidable
 {
     // damage
-    [SerializeField] private int damage = 1;
-    [SerializeField] private float pushForce = 5f;
+    [SerializeField] protected int damage = 1;
+
+    [SerializeField] protected float pushForce = 5f;
 
     protected override void OnCollide(Collider2D coll)
     {

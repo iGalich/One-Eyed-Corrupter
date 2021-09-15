@@ -18,21 +18,17 @@ public class Player : Mover
     [SerializeField] private float dashCooldown;
 
 
-    private SpriteRenderer spriteRenderer;
-
     private bool isAlive = true;
     private bool isDashing;
     private bool inCombat;
+    private bool graceHit;
+    private bool graceHitUsed;
 
     private float lastHeal;
     private float dashTimeLeft;
     private float lastImageXPos;
     private float lastImageYPos;
     private float lastDash = float.MinValue;
-
-    private int direction;
-
-    private Coroutine coroutine;
 
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
@@ -47,6 +43,7 @@ public class Player : Mover
     }
     protected override void Death()
     {
+        AudioManager.Instance.Mute(AudioManager.Instance.GetCurrentlyPlaying());
         AudioManager.Instance.Play("PlayerDeath");
         isAlive = false;
         GameManager.instance.deathMenuAnim.SetTrigger("Show");
@@ -55,43 +52,67 @@ public class Player : Mover
     {
         if (isAlive)
         {
-            base.ReceiveDamage(dmg);
-            GameManager.instance.OnHitpointChange();
+            if (!graceHit || (graceHit && graceHitUsed))
+            {
+                base.ReceiveDamage(dmg);
+                GameManager.instance.OnHitpointChange();
+                if (hitpoint == 1)
+                    graceHit = true;
+            }
+            else if (canBeHit && !graceHitUsed && graceHit)
+            {
+
+                lastImmune = Time.time;
+                pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
+                canBeHit = false;
+                StartCoroutine(BecomeTemporarilyInvincible());
+                GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), new Vector3(0, 0.16f, 0), 0.5f);
+                GameManager.instance.weapon.SetCritTextMulti();
+                GameManager.instance.weapon.SetDashTextMulti();
+
+                if (this.CompareTag("Fighter"))
+                {
+                    GameManager.instance.weapon.TimeStop();
+                }
+
+                if (this.name == "Player")
+                {
+                    CinemachineShake.Insatnce.ShakeCamera(CinemachineShake.Insatnce.GetCameraShakeIntensity(), 0.1f);
+                }
+                if (rb != null)
+                {
+                    ApplyKnockback(pushDirection);
+                }
+
+                graceHitUsed = true;
+            }
         }
+
     }
     protected override void Start()
     {
         base.Start();
         GameManager.instance.OnHitpointChange();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        //levelUpParticles = GetComponentInChildren<ParticleSystem>();
         levelUpParticles.Pause();
     }
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
+        // checks if player is under 50% health, and heals to 50% overtime
         if (hitpoint < maxHitpoint / 2 && isAlive && !inCombat && Time.time - lastImmune > 5f)
             AutoHeal();
+
+        // TODO remove before final build
+        // currently here for bug cases
         if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.R))
             GameManager.instance.Respawn();
-        if (Input.GetKeyDown(KeyCode.E) && !DialogueUI.IsOpen)
+
+        // E button is used to interact with npcs
+        if (Input.GetKeyDown(KeyCode.E) && !DialogueUI.IsOpen && isAlive)
             Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
 
-        if (Input.GetKeyDown(KeyCode.A)) //TODO improve this system using switch statement and add have 8 dash directions
-            {
-                direction = 1;
-            }
-        else if (Input.GetKeyDown(KeyCode.D))
-            {
-                direction = 2;
-            }
-        else if (Input.GetKeyDown(KeyCode.W))
-            {
-                direction = 3;
-            }
-        else if (Input.GetKeyDown(KeyCode.S))
-            {
-                direction = 4;
-            }
+        // dash button
         if (Input.GetKeyDown(KeyCode.LeftShift) && isAlive)
         {
             if (Time.time >= lastDash + dashCooldown)
@@ -125,52 +146,19 @@ public class Player : Mover
         {
             if (dashTimeLeft > 0)
             {
-                switch (direction)
-                {
-                    case 1:
-                        rb.velocity = dashSpeed * Vector2.left + new Vector2(0, rb.velocity.y);
-                        dashTimeLeft -= Time.deltaTime;
-                        if (Mathf.Abs(transform.position.x - lastImageXPos) > distanceBetweenImages)
-                        {
-                            PlayerAfterImagePool.Instance.GetFromPool();
-                            lastImageXPos = transform.position.x;
-                        }
-                        break;
-                    case 2:
-                        rb.velocity = dashSpeed * Vector2.right + new Vector2(0, rb.velocity.y);
-                        dashTimeLeft -= Time.deltaTime;
-                        if (Mathf.Abs(transform.position.x - lastImageXPos) > distanceBetweenImages)
-                        {
-                            PlayerAfterImagePool.Instance.GetFromPool();
-                            lastImageXPos = transform.position.x;
-                        }
-                        break;
-                    case 3:
-                        rb.velocity = dashSpeed * Vector2.up + new Vector2(rb.velocity.x, 0);
-                        dashTimeLeft -= Time.deltaTime;
-                        if (Mathf.Abs(transform.position.y - lastImageYPos) > distanceBetweenImages)
-                        {
-                            PlayerAfterImagePool.Instance.GetFromPool();
-                            lastImageYPos = transform.position.y;
-                        }
-                        break;
-                    case 4:
-                        rb.velocity = dashSpeed * Vector2.down + new Vector2(rb.velocity.x, 0);
-                        dashTimeLeft -= Time.deltaTime;
-                        if (Mathf.Abs(transform.position.y - lastImageYPos) > distanceBetweenImages)
-                        {
-                            PlayerAfterImagePool.Instance.GetFromPool();
-                            lastImageYPos = transform.position.y;
-                        }
-                        break;
-                }
-                //rb.velocity = new Vector2(dashSpeed * rb.velocity.x, rb.velocity.y * dashSpeed);
+                rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) * dashSpeed;
+
                 dashTimeLeft -= Time.deltaTime;
 
                 if (Mathf.Abs(transform.position.x - lastImageXPos) > distanceBetweenImages)
                 {
                     PlayerAfterImagePool.Instance.GetFromPool();
                     lastImageXPos = transform.position.x;
+                }
+                if (Mathf.Abs(transform.position.y - lastImageYPos) > distanceBetweenImages)
+                {
+                    PlayerAfterImagePool.Instance.GetFromPool();
+                    lastImageYPos = transform.position.y;
                 }
             }
             if (dashTimeLeft <= 0)
@@ -215,6 +203,11 @@ public class Player : Mover
         {
             lastHeal = Time.time;
             GameManager.instance.player.Heal(1);
+        }
+        if (graceHitUsed)
+        {
+            graceHitUsed = false;
+            graceHit = false;
         }
     }
     public void Respawn()
