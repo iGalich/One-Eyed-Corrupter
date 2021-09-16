@@ -43,6 +43,7 @@ public class DialogueUI : MonoBehaviour
         }
 
         GameManager.instance.CanClickInvetnory(false);
+
         StartCoroutine(StepThroughDialogue(dialogueObject));
     }
 

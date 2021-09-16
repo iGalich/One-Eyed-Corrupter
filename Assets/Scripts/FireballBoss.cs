@@ -64,7 +64,7 @@ public class FireballBoss : Enemy
     {
         if (hpBarBack.localScale.x > hpBarFront.localScale.x)
         {
-            hpBarBack.localScale = new Vector3(Mathf.Lerp(hpBarBack.localScale.x, hpBarFront.localScale.x, Time.deltaTime), hpBarBack.localScale.y, hpBarBack.localScale.z);
+            hpBarBack.localScale = new Vector3(Mathf.Lerp(hpBarBack.localScale.x, hpBarFront.localScale.x, Time.unscaledDeltaTime), hpBarBack.localScale.y, hpBarBack.localScale.z);
         }
     }
     private void HitPointChange() 
@@ -129,7 +129,7 @@ public class FireballBoss : Enemy
         isDead = true;
         int xp = CalculateExperinceWorth();
         GameManager.instance.GrantXp(xp);
-        GameManager.instance.ShowText("+" + xp + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 40, 1.0f);
+        GameManager.instance.ShowText("+" + xp + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 20, 2.0f);
     }
     public bool CheckIsDead()
     {

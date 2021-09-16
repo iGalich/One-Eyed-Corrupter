@@ -22,8 +22,11 @@ public class Fighter : MonoBehaviour
 
     protected bool canBeHit = true;
 
+    private WaitForSecondsRealtime invinicilityTick;
+
     protected virtual void Start()
     {
+        invinicilityTick = new WaitForSecondsRealtime(invincibilityDeltaTime);
         //defaultScale = transform.localScale;
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
@@ -45,7 +48,7 @@ public class Fighter : MonoBehaviour
             pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
             canBeHit = false;
             StartCoroutine(BecomeTemporarilyInvincible());
-            GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), new Vector3(0, 0.16f, 0), 0.5f);
+            GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
             GameManager.instance.weapon.SetCritTextMulti();
             GameManager.instance.weapon.SetDashTextMulti();
 
@@ -89,7 +92,7 @@ public class Fighter : MonoBehaviour
             else
                 spriteRenderer.enabled = true;
 
-            yield return new WaitForSecondsRealtime(invincibilityDeltaTime);
+            yield return invinicilityTick;
         }
         spriteRenderer.enabled = true;
     }

@@ -12,11 +12,13 @@ public class Player : Mover
 
     [SerializeField] private ParticleSystem levelUpParticles;
 
+    [SerializeField] private GameObject entireHealthBar;
+
     [SerializeField] private float dashSpeed;
     [SerializeField] private float dashTime;
     [SerializeField] private float distanceBetweenImages;
     [SerializeField] private float dashCooldown;
-
+    [SerializeField] private float shakeAmount = 5f;
 
     private bool isAlive = true;
     private bool isDashing;
@@ -29,6 +31,7 @@ public class Player : Mover
     private float lastImageXPos;
     private float lastImageYPos;
     private float lastDash = float.MinValue;
+
 
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
@@ -66,7 +69,7 @@ public class Player : Mover
                 pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
                 canBeHit = false;
                 StartCoroutine(BecomeTemporarilyInvincible());
-                GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), new Vector3(0, 0.16f, 0), 0.5f);
+                GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
                 GameManager.instance.weapon.SetCritTextMulti();
                 GameManager.instance.weapon.SetDashTextMulti();
 
@@ -87,7 +90,20 @@ public class Player : Mover
                 graceHitUsed = true;
             }
         }
+        if (hitpoint == 1)
+        {
+            StartCoroutine(ShakeBar());
+        }
 
+    }
+    private IEnumerator ShakeBar()
+    {
+        while (hitpoint == 1)
+        {
+            iTween.ShakePosition(entireHealthBar, Vector3.one * shakeAmount, 0.5f);
+
+            yield return new WaitForSeconds(1f);
+        }
     }
     protected override void Start()
     {
@@ -132,18 +148,27 @@ public class Player : Mover
     }
     private void AttemptToDash()
     {
-        isDashing = true;
-        dashTimeLeft = dashTime;
-        lastDash = Time.time;
+        if (Stamina.Instance.CheckStamina())
+        {
+            isDashing = true;
+            dashTimeLeft = dashTime;
+            lastDash = Time.time;
 
-        PlayerAfterImagePool.Instance.GetFromPool();
-        lastImageXPos = transform.position.x;
-        lastImageYPos = transform.position.y;
+            PlayerAfterImagePool.Instance.GetFromPool();
+            lastImageXPos = transform.position.x;
+            lastImageYPos = transform.position.y;
+        }
+        else
+        {
+            Stamina.Instance.ShakeBar();
+        }
     }
     private void CheckDash()
     {
         if (isDashing)
         {
+            Stamina.Instance.OnStaminaUse();
+
             if (dashTimeLeft > 0)
             {
                 rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) * dashSpeed;
@@ -221,5 +246,7 @@ public class Player : Mover
         maxHitpoint = minHitPoint;
         hitpoint = maxHitpoint;
         GameManager.instance.OnHitpointChange();
+        graceHitUsed = false;
+        graceHit = false;
     }
 }

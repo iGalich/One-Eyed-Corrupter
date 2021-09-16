@@ -15,6 +15,8 @@ public class CharacterMenu : MonoBehaviour
 
     [SerializeField] private RectTransform xpBar;
 
+    private bool menuIsOpen;
+
     // character selection
     public void OnArrowClick (bool right)
     {
@@ -45,17 +47,34 @@ public class CharacterMenu : MonoBehaviour
         characterSelectionSprite.sprite = GameManager.instance.playerSprites[currentCharacterSelection];
         GameManager.instance.player.SwapSprite(currentCharacterSelection);
     }
-
     // weapon upgrade
     public void OnUpgradeClick()
     {
         if (GameManager.instance.TryUpgradeWeapon())
             UpdateMenu();
     }
+    public void SetMenuIsOpen(bool isOpen)
+    {
+        menuIsOpen = isOpen;
+    }
 
     // update character information
     public void UpdateMenu()
     {
+        switch (menuIsOpen)
+        {
+            case true:
+                GameManager.instance.GetInventoryMenuAnim().SetTrigger("hide");
+                GameManager.instance.CanClickInvetnory(true);
+                menuIsOpen = false;
+                break;
+            case false:
+                menuIsOpen = true;
+                GameManager.instance.GetInventoryMenuAnim().SetTrigger("show");
+                GameManager.instance.CanClickInvetnory(false);
+                break;
+        }
+
         int currLevel = GameManager.instance.GetCurrentLevel();
         //weapon
         weaponSprite.sprite = GameManager.instance.weaponSprites[GameManager.instance.weapon.weaponLevel + 1];

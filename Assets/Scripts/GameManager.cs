@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private RectTransform decayingBar;
 
     public Animator deathMenuAnim;
+    private Animator inventoryMenuAnim;
 
     public FloatingTextManager floatingTextManager;
 
@@ -64,15 +65,23 @@ public class GameManager : MonoBehaviour
 
         UpdateSceneMusicPlayer();
     }
+    private void Start()
+    {
+        inventoryMenuAnim = GameObject.Find("Menu").GetComponent<Animator>();
+    }
     private void Update()
     {
         SyncBar();
+    }
+    public Animator GetInventoryMenuAnim()
+    {
+        return inventoryMenuAnim;
     }
     private void SyncBar()
     {
         if (decayingBar.localScale.y != hitpointBar.localScale.y)
         {
-            decayingBar.localScale = new Vector3(decayingBar.localScale.x, Mathf.Lerp(decayingBar.localScale.y, hitpointBar.localScale.y, Time.deltaTime), decayingBar.localScale.z);
+            decayingBar.localScale = new Vector3(decayingBar.localScale.x, Mathf.Lerp(decayingBar.localScale.y, hitpointBar.localScale.y, Time.unscaledDeltaTime), decayingBar.localScale.z);
         }
     }
     public void CanClickInvetnory(bool canClick)
@@ -229,6 +238,20 @@ public class GameManager : MonoBehaviour
                 break;
             default: Debug.Log("No music is playing!!!");
                 break;
+        }
+    }
+    /// <summary>
+    /// Flips time scale between 0 & 1
+    /// </summary>
+    public void SetTimeScale()
+    {
+        switch (Time.timeScale)
+        {
+            case 0: Time.timeScale = 1;
+                break;
+            case 1: Time.timeScale = 0;
+                break;
+            default: return;
         }
     }
 }

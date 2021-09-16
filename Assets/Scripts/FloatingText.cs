@@ -13,7 +13,7 @@ public class FloatingText
     public void Show()
     {
         active = true;
-        lastShown = Time.time;
+        lastShown = Time.unscaledTime;
         go.SetActive(active);
     }
 
@@ -28,9 +28,9 @@ public class FloatingText
         if (!active)
             return;
 
-        if (Time.time - lastShown > duration)
+        if (Time.unscaledTime - lastShown > duration)
             Hide();
 
-        go.transform.position += motion * Time.deltaTime;
+        go.transform.position += motion * Time.unscaledDeltaTime;
     }
 }
