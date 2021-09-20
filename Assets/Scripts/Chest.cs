@@ -15,6 +15,7 @@ public class Chest : Collectable
             collected = true;
             GetComponent<SpriteRenderer>().sprite = emptyChest;
             GameManager.instance.GrantPesos(pesosAmount);
+            AudioManager.Instance.Play("OpenedChest");
         }
     }
 }

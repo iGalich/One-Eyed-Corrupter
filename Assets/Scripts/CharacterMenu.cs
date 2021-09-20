@@ -72,6 +72,7 @@ public class CharacterMenu : MonoBehaviour
                 menuIsOpen = true;
                 GameManager.instance.GetInventoryMenuAnim().SetTrigger("show");
                 GameManager.instance.CanClickInvetnory(false);
+                AudioManager.Instance.Play("OpenInventory");
                 break;
         }
 

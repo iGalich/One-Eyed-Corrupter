@@ -27,4 +27,8 @@ public class EnemyHitbox : Collidable
             coll.SendMessage("ReceiveDamage", dmg);
         }
     }
+    public float GetPushForce()
+    {
+        return pushForce;
+    }
 }

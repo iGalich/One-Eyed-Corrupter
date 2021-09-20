@@ -10,10 +10,14 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private Image actorSprite;
     [SerializeField] private TMP_Text actorName;
 
+    [SerializeField] private string playerName;
+
     public bool IsOpen { get; private set; }
 
     private TypewriterEffect typewriterEffect;
     private ResponseHandler responseHandler;
+
+    private Sound actorTalkSound;
 
     private void Start()
     {
@@ -33,13 +37,15 @@ public class DialogueUI : MonoBehaviour
 
         if (dialogueObject.actor == null) // if speaker is Player
         {
-            actorName.text = "<b>Player:</b>";
+            actorName.text = "<b>" + playerName + ":</b>";
             actorSprite.sprite = GameManager.instance.player.GetPlayerSprite();
+            actorTalkSound = AudioManager.Instance.FindSound("PlayerTalk");
         }
         else
         {
             actorName.text = "<b>" + dialogueObject.actor.ActorName + ":</b>";
             actorSprite.sprite = dialogueObject.actor.ActorSprite;
+            actorTalkSound = dialogueObject.actor.ActorTalkSound;
         }
 
         GameManager.instance.CanClickInvetnory(false);
@@ -66,7 +72,7 @@ public class DialogueUI : MonoBehaviour
                 break;
 
             yield return null;
-            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0));
         }
 
         if (dialogueObject.HasResponses)
@@ -77,7 +83,7 @@ public class DialogueUI : MonoBehaviour
     }
     private IEnumerator RunTypingEffect(string dialogue)
     {
-        typewriterEffect.Run(dialogue, textLabel);
+        typewriterEffect.Run(dialogue, textLabel, actorTalkSound);
 
         while (typewriterEffect.IsRunning)
         {

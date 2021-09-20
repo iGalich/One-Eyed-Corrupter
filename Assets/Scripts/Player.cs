@@ -1,4 +1,3 @@
-//using System.Threading.Tasks.Dataflow;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,6 +31,7 @@ public class Player : Mover
     private float lastImageYPos;
     private float lastDash = float.MinValue;
 
+    [SerializeField] private string receivedDamaged = "PlayerGotHit";
 
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
@@ -69,9 +69,9 @@ public class Player : Mover
                 pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
                 canBeHit = false;
                 StartCoroutine(BecomeTemporarilyInvincible());
-                GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
-                GameManager.instance.weapon.SetCritTextMulti();
-                GameManager.instance.weapon.SetDashTextMulti();
+                AudioManager.Instance.Play(receivedDamaged);
+                if (dmg.damageAmount > 0)
+                    GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
 
                 if (this.CompareTag("Fighter"))
                 {
@@ -143,7 +143,9 @@ public class Player : Mover
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
         if (isAlive)
+        { 
             UpdateMotor(new Vector3(x, y, 0).normalized);
+        }
         CheckDash();
     }
     private void AttemptToDash()
@@ -157,6 +159,8 @@ public class Player : Mover
             PlayerAfterImagePool.Instance.GetFromPool();
             lastImageXPos = transform.position.x;
             lastImageYPos = transform.position.y;
+
+            AudioManager.Instance.Play("Dash");
         }
         else
         {
@@ -169,6 +173,7 @@ public class Player : Mover
         {
             Stamina.Instance.OnStaminaUse();
 
+            
             if (dashTimeLeft > 0)
             {
                 rb.velocity = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) * dashSpeed;
@@ -228,6 +233,7 @@ public class Player : Mover
         {
             lastHeal = Time.time;
             GameManager.instance.player.Heal(1);
+            AudioManager.Instance.Play("HealthRegen");
         }
         if (graceHitUsed)
         {

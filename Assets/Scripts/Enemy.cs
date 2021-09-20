@@ -7,6 +7,9 @@ public class Enemy : Mover
     // experience worth
     [SerializeField] private int xpValue = 1;
 
+    //gold worth
+    [SerializeField] private int pesosValue;
+
     // logic
     [SerializeField] private float triggerLength = 1;
     [SerializeField] private float chaseLength = 5;
@@ -15,8 +18,6 @@ public class Enemy : Mover
     private bool collidingWithPlayer;
 
     private Transform playerTransform;
-
-    private Vector3 startingPosition;
 
     // hitbox
     public ContactFilter2D filter;
@@ -29,12 +30,16 @@ public class Enemy : Mover
     {
         base.Start();
         playerTransform = GameManager.instance.player.transform;
-        startingPosition = transform.position;
         hitbox = transform.GetChild(0).GetComponent<BoxCollider2D>();
     }
-
+    private void ReturnToPlace()
+    {
+        UpdateMotor(startingPosition - transform.position);
+    }
     private void FixedUpdate()
     {
+        if (isDummy && startingPosition != transform.position)
+            ReturnToPlace();
         // is the player in range
         if (Vector3.Distance(playerTransform.position, startingPosition) < chaseLength)
         {
@@ -90,6 +95,8 @@ public class Enemy : Mover
         Destroy(gameObject);
         GameManager.instance.player.SetInCombat(false);
         GameManager.instance.GrantXp(xpValue);
+        if (pesosValue > 0)
+            GameManager.instance.GrantPesos(pesosValue);
         GameManager.instance.ShowText("+" + xpValue + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 20, 2.0f);
     }
 }

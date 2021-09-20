@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Audio;
 
 public class TypewriterEffect : MonoBehaviour
 {
@@ -18,16 +19,16 @@ public class TypewriterEffect : MonoBehaviour
 
     private Coroutine typingCoroutine;
 
-    public void Run(string textToType, TMP_Text textLabel)
+    public void Run(string textToType, TMP_Text textLabel, Sound talkSound)
     {
-        typingCoroutine = StartCoroutine(TypeText(textToType, textLabel));
+        typingCoroutine = StartCoroutine(TypeText(textToType, textLabel, talkSound));
     }
     public void Stop()
     {
         StopCoroutine(typingCoroutine);
         IsRunning = false;
     }
-    private IEnumerator TypeText(string textToType, TMP_Text textLabel)
+    private IEnumerator TypeText(string textToType, TMP_Text textLabel, Sound talkSound)
     {
         IsRunning = true;
         textLabel.text = string.Empty;
@@ -50,7 +51,15 @@ public class TypewriterEffect : MonoBehaviour
                 bool isLast = i >= textToType.Length - 1;
 
                 textLabel.text = textToType.Substring(0, i + 1);
-                
+
+                talkSound.source = gameObject.AddComponent<AudioSource>();
+                talkSound.source.clip = talkSound.clip;
+                talkSound.source.volume = talkSound.volume;
+                talkSound.source.pitch = talkSound.pitch;
+                talkSound.source.loop = talkSound.loop;
+
+                talkSound.source.Play();
+
                 if (IsPunctuation(textToType[i], out float waitTime) && !isLast && !IsPunctuation(textToType[i + 1], out _))
                     yield return new WaitForSeconds(waitTime);
             }

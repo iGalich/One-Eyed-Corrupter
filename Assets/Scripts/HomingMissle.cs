@@ -58,6 +58,7 @@ public class HomingMissle : MonoBehaviour
             col.SendMessage("ReceiveDamage", dmg);
 
             Instantiate(explosionEffect, transform.position, transform.rotation);
+            AudioManager.Instance.Play("MissileExplosion");
             bossParent.SetLastMissleTime();
             bossParent.SetActiveMissleExists(false);
             Destroy(gameObject);

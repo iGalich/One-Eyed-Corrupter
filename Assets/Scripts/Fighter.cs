@@ -11,6 +11,10 @@ public class Fighter : MonoBehaviour
     [SerializeField] protected float immuneTime = 1.0f;
     [SerializeField] protected float invincibilityDeltaTime = 0.15f;
 
+    [SerializeField] protected bool isDummy;
+
+    [SerializeField] protected string hitSFX;
+
     protected float lastImmune;
 
     protected Vector3 pushDirection;
@@ -24,19 +28,30 @@ public class Fighter : MonoBehaviour
 
     private WaitForSecondsRealtime invinicilityTick;
 
+    protected Vector3 startingPosition;
+
     protected virtual void Start()
     {
         invinicilityTick = new WaitForSecondsRealtime(invincibilityDeltaTime);
         //defaultScale = transform.localScale;
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        startingPosition = transform.position;
     }
     protected virtual void Update()
     {
+        if (GameManager.instance.weapon.GetDashTextMulti() != 1)
+            GameManager.instance.weapon.SetDashTextMulti();
+        if (GameManager.instance.weapon.GetCritTextMulti() != 1)
+            GameManager.instance.weapon.SetCritTextMulti();
+
         if (Time.time - lastImmune > immuneTime)
             canBeHit = true;
         else
             canBeHit = false;
+
+        if (hitpoint < maxHitpoint && isDummy)
+            hitpoint = maxHitpoint;
     }
     // all fighers can receive damage and die
     protected virtual void ReceiveDamage(Damage dmg)
@@ -48,9 +63,9 @@ public class Fighter : MonoBehaviour
             pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
             canBeHit = false;
             StartCoroutine(BecomeTemporarilyInvincible());
-            GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
-            GameManager.instance.weapon.SetCritTextMulti();
-            GameManager.instance.weapon.SetDashTextMulti();
+            AudioManager.Instance.Play(GameManager.instance.weapon.GetHitLandOnEnemySFX());
+            if (dmg.damageAmount > 0)
+                GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
 
             if (this.CompareTag("Fighter"))
             {
@@ -78,10 +93,6 @@ public class Fighter : MonoBehaviour
     {
         Debug.Log("Death was not implemented in " + this.name);
     }
-    //protected void ScaleModelTo(Vector3 scale)
-    //{
-    //    transform.localScale = scale;
-    //}
     protected virtual IEnumerator BecomeTemporarilyInvincible()
     {
         while (!canBeHit)

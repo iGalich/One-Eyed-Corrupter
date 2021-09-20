@@ -27,6 +27,7 @@ public class CinemachineShake : MonoBehaviour
         startingIntensity = intensity;
         shakeTimerTotal = time;
         shakeTimer = time;
+        
     }
     private void Update()
     {

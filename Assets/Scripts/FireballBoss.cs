@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +21,6 @@ public class FireballBoss : Enemy
 
     private int fireballCount;
 
-    private float currentHp;
     private float healthRatio;
     private float lastMissle;
 
@@ -30,7 +31,6 @@ public class FireballBoss : Enemy
     protected override void Start()
     {
         base.Start();
-        currentHp = (float)hitpoint;
         hpBarFront = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/Health").GetComponent<RectTransform>();
         hpBarBack = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/DecayingHealthBar").GetComponent<RectTransform>();
         fireballCount = fireballs.Length;

@@ -31,6 +31,8 @@ public class Weapon : Collidable
 
     private Vector3 camPositionOriginal;
 
+    private string hitLandOnEnemySFX;
+
     [SerializeField] private float stopTime = 0.2f; // how long to stop time for
     [SerializeField] private float slowTime = 0.2f;
     [SerializeField] private float shake = 0.5f;
@@ -41,6 +43,10 @@ public class Weapon : Collidable
     {
         base.Start();
         anim = GetComponent<Animator>();
+    }
+    public string GetHitLandOnEnemySFX()
+    {
+        return hitLandOnEnemySFX;
     }
     protected override void Update()
     {
@@ -69,6 +75,8 @@ public class Weapon : Collidable
                 return;
             }
 
+            hitLandOnEnemySFX = "NormalPlayerHit";
+
             //create new damage object, and send it to the fighter hit
             Damage dmg = new Damage()
             {
@@ -81,13 +89,18 @@ public class Weapon : Collidable
             {
                 dmg.damageAmount *= dashDmgMultiplier;
                 dashTextMultiSize = 1.2f;
+                hitLandOnEnemySFX = "DashPlayerHit";
             }
 
             if (Random.value > (100f - GameManager.instance.weapon.critChance[weaponLevel]) / 100f)
             {
                 dmg.damageAmount *= critDmgMultiplier;
                 critTextMultiSize = 1.5f;
+                hitLandOnEnemySFX = "CritPlayerHit";
             }
+
+            object[] tempStorage = new object[2];
+            
 
             coll.SendMessage("ReceiveDamage", dmg);
         }
@@ -95,6 +108,15 @@ public class Weapon : Collidable
     private void Swing()
     {
         anim.SetTrigger("Swing");
+        switch (weaponLevel)
+        {
+            case 0:
+                AudioManager.Instance.Play("SwordSwingWooden");
+                break;
+            default:
+                AudioManager.Instance.Play("SwordSwingNormal");
+                break;
+        }
     }
     public void TimeStop()
     {

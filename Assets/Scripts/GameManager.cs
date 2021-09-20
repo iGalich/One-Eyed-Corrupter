@@ -59,6 +59,13 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (hud.activeSelf == false)
+            hud.SetActive(true);
+        if (menu.activeSelf == false)
+            menu.SetActive(true);
+        if (dialogue.activeSelf == false)
+            dialogue.SetActive(true);     
+
         instance = this;
         SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -169,7 +176,8 @@ public class GameManager : MonoBehaviour
     public void GrantPesos(int pesosAmount)
     {
         pesos += pesosAmount;
-        GameManager.instance.ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
+        ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
+        AudioManager.Instance.Play("GotPesos");
     }
     public void SetPesos(int pesosAmount)
     {
