@@ -31,5 +31,7 @@ public class SwitchChestSprite : MonoBehaviour
         }
 
         chestImage.sprite = chestSprites[spriteIndex];
+
+        
     }
 }

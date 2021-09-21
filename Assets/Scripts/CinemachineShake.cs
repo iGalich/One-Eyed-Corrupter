@@ -12,12 +12,15 @@ public class CinemachineShake : MonoBehaviour
     private float shakeTimer;
     private float startingIntensity;
 
+    private bool isShaking;
+
     [SerializeField] private float cameraShakeIntensity = 5f;
 
     private void Start()
     {
         Insatnce = this;
         vcam = GetComponent<CinemachineVirtualCamera>();
+        isShaking = false;
     }
     public void ShakeCamera(float intensity,float time)
     {
@@ -27,11 +30,11 @@ public class CinemachineShake : MonoBehaviour
         startingIntensity = intensity;
         shakeTimerTotal = time;
         shakeTimer = time;
-        
+        isShaking = true;
     }
     private void Update()
     {
-        if (shakeTimer > 0)
+        if (shakeTimer > 0 && isShaking)
         {
             shakeTimer -= Time.deltaTime;
             if (shakeTimer <= 0f)

@@ -10,7 +10,6 @@ public class Stamina : MonoBehaviour
     [SerializeField] private GameObject entireStaminaBar;
 
     [SerializeField] private RectTransform frontStaminaBar;
-    [SerializeField] private RectTransform backStaminaBar;
 
     [SerializeField] private float staminaRegenCooldown = 0.1f;
     [SerializeField] private float shakeAmount;
@@ -25,21 +24,21 @@ public class Stamina : MonoBehaviour
     private bool shakingBar;
 
     private WaitForSeconds regenTick;
-
     private void Awake()
     {
         Instance = this;
-        if (Instance == null)
-            Instance = this;
     }
     private void Start()
     {
+        Instance = this;
         regenTick = new WaitForSeconds(staminaRegenCooldown);
         currStamina = maxStamina;
     }
     private void Update()
     {
-        SyncBar();
+        if (Instance == null)
+            Instance = this;
+
         if (!reacharging && currStamina != maxStamina)
         {
             reacharging = true;
@@ -49,11 +48,6 @@ public class Stamina : MonoBehaviour
         {
             iTween.ShakePosition(entireStaminaBar, Vector3.one * shakeAmount, 1f);
         }
-    }
-    private void SyncBar()
-    {
-        if (backStaminaBar.localScale.y != frontStaminaBar.localScale.y)
-            backStaminaBar.localScale = new Vector3(backStaminaBar.localScale.x, Mathf.Lerp(backStaminaBar.localScale.y, frontStaminaBar.localScale.y, Time.unscaledDeltaTime), backStaminaBar.localScale.z);
     }
     public void OnStaminaUse()
     {

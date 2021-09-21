@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public GameObject dialogue;
     public GameObject playerAfterImagePool;
     public GameObject audioManager;
+    public GameObject stamina;
 
     [SerializeField] private Button inventoryButton;
 
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviour
             Destroy(dialogue.gameObject);
             Destroy(playerAfterImagePool.gameObject);
             Destroy(audioManager.gameObject);
+            Destroy(stamina.gameObject);
             return;
         }
 
@@ -94,6 +96,10 @@ public class GameManager : MonoBehaviour
     public void CanClickInvetnory(bool canClick)
     {
         inventoryButton.enabled = canClick;
+    }
+    public bool IsInventoryClickable()
+    {
+        return inventoryButton.enabled;
     }
     //floating text
     public void ShowText(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
@@ -167,7 +173,9 @@ public class GameManager : MonoBehaviour
     }
     public void OnLevelUp()
     {
-        ShowText("Level " + GameManager.instance.GetCurrentLevel().ToString(), 50, Color.yellow, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 35, 1.5f);
+        ShowText("Level " + GameManager.instance.GetCurrentLevel().ToString(), 50, Color.yellow, player.transform.position + new Vector3(0, 0.48f, 0), Vector3.up * 15, 2.5f);
+        ShowText("Max Health Increased", 40, Color.red, player.transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 15, 2.5f);
+        ShowText("Health fully restored", 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 2.5f);
         player.OnLevelUp();
         OnHitpointChange();
     }

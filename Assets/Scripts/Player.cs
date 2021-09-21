@@ -19,6 +19,8 @@ public class Player : Mover
     [SerializeField] private float dashCooldown;
     [SerializeField] private float shakeAmount = 5f;
 
+    [SerializeField] private string receivedDamaged = "PlayerGotHit";
+
     private bool isAlive = true;
     private bool isDashing;
     private bool inCombat;
@@ -31,7 +33,6 @@ public class Player : Mover
     private float lastImageYPos;
     private float lastDash = float.MinValue;
 
-    [SerializeField] private string receivedDamaged = "PlayerGotHit";
 
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
@@ -57,7 +58,38 @@ public class Player : Mover
         {
             if (!graceHit || (graceHit && graceHitUsed))
             {
-                base.ReceiveDamage(dmg);
+                if (canBeHit)
+                {
+                    lastImmune = Time.time;
+                    hitpoint -= dmg.damageAmount;
+                    pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
+                    canBeHit = false;
+                    StartCoroutine(BecomeTemporarilyInvincible());
+                    AudioManager.Instance.Play(receivedDamaged);
+                    if (dmg.damageAmount > 0)
+                        GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
+
+                    if (this.CompareTag("Fighter"))
+                    {
+                        GameManager.instance.weapon.TimeStop();
+                    }
+
+                    if (this.name == "Player")
+                    {
+                        CinemachineShake.Insatnce.ShakeCamera(CinemachineShake.Insatnce.GetCameraShakeIntensity(), 0.1f);
+                    }
+                    if (rb != null)
+                    {
+                        ApplyKnockback(pushDirection);
+                    }
+                }
+
+
+                if (hitpoint <= 0)
+                {
+                    hitpoint = 0;
+                    Death();
+                }
                 GameManager.instance.OnHitpointChange();
                 if (hitpoint == 1)
                     graceHit = true;
@@ -254,5 +286,9 @@ public class Player : Mover
         GameManager.instance.OnHitpointChange();
         graceHitUsed = false;
         graceHit = false;
+    }
+    public int GetCurrHealth()
+    {
+        return hitpoint;
     }
 }

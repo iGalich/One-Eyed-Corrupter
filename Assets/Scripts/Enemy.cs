@@ -11,13 +11,18 @@ public class Enemy : Mover
     [SerializeField] private int pesosValue;
 
     // logic
-    [SerializeField] private float triggerLength = 1;
+    [SerializeField] protected float triggerLength = 1;
     [SerializeField] private float chaseLength = 5;
 
-    private bool chasing;
-    private bool collidingWithPlayer;
+    [SerializeField] private GameObject deathParticles;
 
-    private Transform playerTransform;
+    private bool chasing;
+    protected bool collidingWithPlayer;
+
+    private float lastHeal;
+    private float healCooldown = 2f;
+
+    protected Transform playerTransform;
 
     // hitbox
     public ContactFilter2D filter;
@@ -29,6 +34,7 @@ public class Enemy : Mover
     protected override void Start()
     {
         base.Start();
+        deathParticles.GetComponent<ParticleSystem>().Stop();
         playerTransform = GameManager.instance.player.transform;
         hitbox = transform.GetChild(0).GetComponent<BoxCollider2D>();
     }
@@ -36,7 +42,7 @@ public class Enemy : Mover
     {
         UpdateMotor(startingPosition - transform.position);
     }
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (isDummy && startingPosition != transform.position)
             ReturnToPlace();
@@ -86,12 +92,27 @@ public class Enemy : Mover
             hits[i] = null;
         }
     }
+    protected override void Update()
+    {
+        base.Update();
+        if (hitpoint < maxHitpoint && Time.time - lastImmune > 5f && !chasing)
+            AutoHeal();
+    }
+    private void AutoHeal()
+    {
+        if (hitpoint < (int)(maxHitpoint * 0.75f) && Time.time - lastHeal > healCooldown)
+        {
+            lastHeal = Time.time;
+            hitpoint++;
+        }
+    }
     public int GetXpValue()
     {
         return xpValue;
     }
     protected override void Death()
     {
+        Instantiate(deathParticles, transform.position, transform.rotation);
         Destroy(gameObject);
         GameManager.instance.player.SetInCombat(false);
         GameManager.instance.GrantXp(xpValue);

@@ -6,12 +6,13 @@ public class Crate : Fighter
 {
     [SerializeField] private int minAmount = 1, maxAmount = 5;
 
-    [SerializeField] private GameObject breakEffect;
+    [SerializeField] private GameObject breakParticles;
 
     [SerializeField] private bool guaranteedCrate; // if a crate is guaranteed to grant pesos, it'll grant maxAmount
 
     protected override void Start()
     {
+        breakParticles.GetComponent<ParticleSystem>().Stop();
         if (rb == null) return;
     }
     protected override void ReceiveDamage(Damage dmg)
@@ -37,7 +38,7 @@ public class Crate : Fighter
     }
     protected override void Death()
     {
-        Instantiate(breakEffect, transform.position, transform.rotation);
+        Instantiate(breakParticles, transform.position, transform.rotation);
         Destroy(gameObject);
         if (guaranteedCrate)
             GameManager.instance.GrantPesos(maxAmount);

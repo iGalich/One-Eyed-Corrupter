@@ -17,6 +17,11 @@ public class CharacterMenu : MonoBehaviour
 
     private bool menuIsOpen;
 
+    private void Update()
+    {
+        if (GameManager.instance.IsInventoryClickable() && menuIsOpen)
+            GameManager.instance.CanClickInvetnory(false);
+    }
     // character selection
     public void OnArrowClick (bool right)
     {
@@ -60,22 +65,7 @@ public class CharacterMenu : MonoBehaviour
 
     // update character information
     public void UpdateMenu()
-    {
-        switch (menuIsOpen)
-        {
-            case true:
-                GameManager.instance.GetInventoryMenuAnim().SetTrigger("hide");
-                GameManager.instance.CanClickInvetnory(true);
-                menuIsOpen = false;
-                break;
-            case false:
-                menuIsOpen = true;
-                GameManager.instance.GetInventoryMenuAnim().SetTrigger("show");
-                GameManager.instance.CanClickInvetnory(false);
-                AudioManager.Instance.Play("OpenInventory");
-                break;
-        }
-
+    { 
         int currLevel = GameManager.instance.GetCurrentLevel();
         //weapon
         weaponSprite.sprite = GameManager.instance.weaponSprites[GameManager.instance.weapon.weaponLevel + 1];
@@ -107,6 +97,18 @@ public class CharacterMenu : MonoBehaviour
             float completionRatio = (float)currXpIntoLevel / (float)diff;
             xpBar.localScale = new Vector3(completionRatio, 1, 1);
             xpText.text = currXpIntoLevel.ToString() + " / " + diff;
+        }
+    }
+    public void CloseOpenInventory()
+    {
+        switch (menuIsOpen)
+        {
+            case true:
+                GameManager.instance.GetInventoryMenuAnim().SetTrigger("hide");
+                GameManager.instance.CanClickInvetnory(true);
+                menuIsOpen = false;
+                break;
+            
         }
     }
 }

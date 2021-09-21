@@ -15,6 +15,11 @@ public class PlayerAfterImagePool : MonoBehaviour
         Instance = this;
         GrowPool();
     }
+    private void Update()
+    {
+        if (Instance == null)
+            Instance = this;
+    }
     private void GrowPool()
     {
         for (int i = 0; i < 10; i++)

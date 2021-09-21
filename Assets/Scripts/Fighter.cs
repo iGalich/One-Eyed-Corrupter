@@ -63,7 +63,8 @@ public class Fighter : MonoBehaviour
             pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
             canBeHit = false;
             StartCoroutine(BecomeTemporarilyInvincible());
-            AudioManager.Instance.Play(GameManager.instance.weapon.GetHitLandOnEnemySFX());
+            if (this.name != "Player")
+                AudioManager.Instance.Play(GameManager.instance.weapon.GetHitLandOnEnemySFX());
             if (dmg.damageAmount > 0)
                 GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
 

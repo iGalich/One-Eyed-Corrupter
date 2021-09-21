@@ -17,7 +17,25 @@ public class FloatingTextManager : MonoBehaviour
     private void Update()
     {
         foreach (FloatingText txt in floatingTexts)
+        {
             txt.UpdateFloatingText();
+            StartCoroutine(FadeTextCo(txt));
+        }
+    }
+    private IEnumerator FadeTextCo(FloatingText txt)
+    {
+        while (txt.txt.color.a > 0)
+        {
+            Color newColor = new Color(txt.txt.color.r, txt.txt.color.g, txt.txt.color.b, txt.txt.color.a - 0.001f);
+            txt.txt.color = newColor;
+            yield return new WaitForSeconds(txt.duration / 10f);
+        }
+        if (txt.txt.color.a <= 0)
+        {
+            txt.txt.color = new Color(txt.txt.color.r, txt.txt.color.g, txt.txt.color.b, 0);
+            txt.Hide();
+            yield return null;
+        }
     }
     public void Show(string msg, int fontSize, Color color, Vector3 position, Vector3 motion, float duration)
     {

@@ -54,6 +54,4 @@ public abstract class Mover : Fighter
             transform.Translate(moveDelta.x * Time.deltaTime, 0, 0);
         }
     }
-
-    
 }
