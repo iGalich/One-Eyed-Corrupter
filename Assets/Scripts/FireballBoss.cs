@@ -7,7 +7,7 @@ public class FireballBoss : Enemy
 {
     [SerializeField] private float[] fireballSpeed = { 2.5f, -2.5f };
     
-    [SerializeField] private Transform[] fireballs;
+    //[SerializeField] private Transform[] fireballs;
 
     [SerializeField] private float distance = 0.25f;
     [SerializeField] private float modifier = 1.5f;
@@ -16,6 +16,8 @@ public class FireballBoss : Enemy
 
     [SerializeField] private GameObject homingMisslePrefab;
 
+    public List<FireballEnemy> bossFireBalls;
+
     private RectTransform hpBarFront;
     private RectTransform hpBarBack;
 
@@ -23,6 +25,8 @@ public class FireballBoss : Enemy
 
     private float healthRatio;
     private float lastMissle;
+    private float deathTime;
+    private float deathParticlesCooldown = 1.5f;
 
     private bool activeMissleExists = false;
     private bool speedHasIncreased = false;
@@ -33,7 +37,15 @@ public class FireballBoss : Enemy
         base.Start();
         hpBarFront = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/Health").GetComponent<RectTransform>();
         hpBarBack = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/DecayingHealthBar").GetComponent<RectTransform>();
-        fireballCount = fireballs.Length;
+        //fireballCount = fireballs.Length;
+
+        foreach (Transform child in transform)
+        {
+            if (child.gameObject.GetComponent<FireballEnemy>() != null)
+                bossFireBalls.Add(child.gameObject.GetComponent<FireballEnemy>());
+        }
+
+        fireballCount = bossFireBalls.Count;
     }
     protected override void Update()
     {
@@ -41,12 +53,12 @@ public class FireballBoss : Enemy
 
         SyncBar();
 
-        for (int i = 0; i < fireballs.Length; i++)
+        for (int i = 0; i < bossFireBalls.Count; i++)
         {
-            if (fireballs[i] == null)  
+            if (bossFireBalls[i] == null)  
                 continue;
 
-            fireballs[i].position = transform.position + new Vector3(-Mathf.Cos(Time.time * fireballSpeed[i] * modifier + i) * distance,
+            bossFireBalls[i].transform.position = transform.position + new Vector3(-Mathf.Cos(Time.time * fireballSpeed[i] * modifier + i) * distance,
                                                                     Mathf.Sin(Time.time * fireballSpeed[i] / modifier) * distance,
                                                                     0);
         }
@@ -58,6 +70,17 @@ public class FireballBoss : Enemy
         {
             speedHasIncreased = true;
             IncreaseMoveSpeed();
+        }
+        if (isDead && Time.time - deathTime > deathParticlesCooldown)
+        {
+            deathParticles.GetComponent<ParticleSystem>().Stop();
+            foreach (FireballEnemy fireball in bossFireBalls)
+            {
+                if (fireball != null)
+                    fireball.SendMessage("Destroy");
+                else
+                    continue;
+            }
         }
     }
     private void SyncBar()
@@ -114,9 +137,9 @@ public class FireballBoss : Enemy
     {
         int totalXpWorth = GetXpValue();
         {
-            for (int i = 0; i < fireballs.Length; i++)
+            for (int i = 0; i < bossFireBalls.Count; i++)
             {
-                if (fireballs[i] != null)
+                if (bossFireBalls[i] != null)
                     totalXpWorth += GetComponentInChildren<FireballEnemy>().GetXpValue();
             }
         }
@@ -124,6 +147,8 @@ public class FireballBoss : Enemy
     }
     protected override void Death()
     {
+        deathParticles.GetComponent<ParticleSystem>().Play();
+        deathTime = Time.time;
         gameObject.transform.position += Vector3.up * 10000;
         moveSpeed = 0;
         isDead = true;

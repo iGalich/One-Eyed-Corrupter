@@ -114,7 +114,7 @@ public class Fighter : MonoBehaviour
     }
     public void ApplyKnockback(Vector3 pushDirection)
     {
-        rb.isKinematic = false;
+        //rb.isKinematic = false;
         rb.AddForce(pushDirection, ForceMode2D.Impulse);
         StartCoroutine(KnockbackCo(rb));
     }
@@ -124,7 +124,7 @@ public class Fighter : MonoBehaviour
         {
             yield return new WaitForSeconds(GetPushRecoverySpeed());
             rb.velocity = Vector2.zero;
-            rb.isKinematic = true;
+            //rb.isKinematic = true;
         }
     }
 }

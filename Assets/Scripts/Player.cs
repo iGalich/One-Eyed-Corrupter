@@ -11,6 +11,8 @@ public class Player : Mover
 
     [SerializeField] private ParticleSystem levelUpParticles;
 
+    [SerializeField] private GameObject bloodParticles;
+
     [SerializeField] private GameObject entireHealthBar;
 
     [SerializeField] private float dashSpeed;
@@ -20,6 +22,8 @@ public class Player : Mover
     [SerializeField] private float shakeAmount = 5f;
 
     [SerializeField] private string receivedDamaged = "PlayerGotHit";
+
+    ParticleSystem.MainModule main;
 
     private bool isAlive = true;
     private bool isDashing;
@@ -33,17 +37,59 @@ public class Player : Mover
     private float lastImageYPos;
     private float lastDash = float.MinValue;
 
+    private int bloodDropAmount = 100;
+
 
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
 
-    public void SetInCombat(bool isInCombat)
+    protected override void Start()
     {
-        inCombat = isInCombat;
+        base.Start();
+        GameManager.instance.OnHitpointChange();
+        levelUpParticles.Pause();
+        bloodParticles.GetComponent<ParticleSystem>().Stop();
+        main = bloodParticles.GetComponent<ParticleSystem>().main;
+        main.maxParticles = bloodDropAmount;
     }
-    public bool GetIsDashing()
+    protected override void Update()
     {
-        return isDashing;
+        base.Update();
+
+        // checks if player is under 50% health, and heals to 50% overtime
+        if (hitpoint < maxHitpoint / 2 && isAlive && !inCombat && Time.time - lastImmune > 5f)
+            AutoHeal();
+
+        // TODO remove before final build
+        // currently here for bug cases
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.R))
+            GameManager.instance.Respawn();
+
+        // E button is used to interact with npcs
+        if (Input.GetKeyDown(KeyCode.E) && !DialogueUI.IsOpen && isAlive)
+            Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
+
+        // dash button
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isAlive)
+        {
+            if (Time.time >= lastDash + dashCooldown)
+                AttemptToDash();
+        }
+
+        if (!bloodParticles.GetComponent<ParticleSystem>().isPlaying)
+            main.maxParticles = 100;
+    }
+    private void FixedUpdate()
+    {
+        if (dialogueUI.IsOpen) return;
+
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+        if (isAlive)
+        { 
+            UpdateMotor(new Vector3(x, y, 0).normalized);
+        }
+        CheckDash();
     }
     protected override void Death()
     {
@@ -67,7 +113,11 @@ public class Player : Mover
                     StartCoroutine(BecomeTemporarilyInvincible());
                     AudioManager.Instance.Play(receivedDamaged);
                     if (dmg.damageAmount > 0)
+                    {
+                        main.maxParticles *= dmg.damageAmount;
+                        bloodParticles.GetComponent<ParticleSystem>().Play();
                         GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
+                    }
 
                     if (this.CompareTag("Fighter"))
                     {
@@ -84,8 +134,17 @@ public class Player : Mover
                     }
                 }
 
-
-                if (hitpoint <= 0)
+                if (!graceHit && !graceHitUsed && hitpoint <= 0)
+                {
+                    graceHit = true;
+                    hitpoint = 1;
+                }
+                if (graceHit && !graceHitUsed)
+                {
+                    graceHitUsed = true;
+                    hitpoint = 1;
+                }
+                if (hitpoint <= 0 && graceHit && graceHitUsed)
                 {
                     hitpoint = 0;
                     Death();
@@ -103,7 +162,11 @@ public class Player : Mover
                 StartCoroutine(BecomeTemporarilyInvincible());
                 AudioManager.Instance.Play(receivedDamaged);
                 if (dmg.damageAmount > 0)
+                {
+                    main.maxParticles *= dmg.damageAmount;
+                    bloodParticles.GetComponent<ParticleSystem>().Play();
                     GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
+                }
 
                 if (this.CompareTag("Fighter"))
                 {
@@ -136,49 +199,6 @@ public class Player : Mover
 
             yield return new WaitForSeconds(1f);
         }
-    }
-    protected override void Start()
-    {
-        base.Start();
-        GameManager.instance.OnHitpointChange();
-        levelUpParticles.Pause();
-    }
-    protected override void Update()
-    {
-        base.Update();
-
-        // checks if player is under 50% health, and heals to 50% overtime
-        if (hitpoint < maxHitpoint / 2 && isAlive && !inCombat && Time.time - lastImmune > 5f)
-            AutoHeal();
-
-        // TODO remove before final build
-        // currently here for bug cases
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.R))
-            GameManager.instance.Respawn();
-
-        // E button is used to interact with npcs
-        if (Input.GetKeyDown(KeyCode.E) && !DialogueUI.IsOpen && isAlive)
-            Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
-
-        // dash button
-        if (Input.GetKeyDown(KeyCode.LeftShift) && isAlive)
-        {
-            if (Time.time >= lastDash + dashCooldown)
-                AttemptToDash();
-        }
-        
-    }
-    private void FixedUpdate()
-    {
-        if (dialogueUI.IsOpen) return;
-
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-        if (isAlive)
-        { 
-            UpdateMotor(new Vector3(x, y, 0).normalized);
-        }
-        CheckDash();
     }
     private void AttemptToDash()
     {
@@ -290,5 +310,13 @@ public class Player : Mover
     public int GetCurrHealth()
     {
         return hitpoint;
+    }
+    public void SetInCombat(bool isInCombat)
+    {
+        inCombat = isInCombat;
+    }
+    public bool GetIsDashing()
+    {
+        return isDashing;
     }
 }

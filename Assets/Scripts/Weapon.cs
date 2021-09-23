@@ -98,8 +98,6 @@ public class Weapon : Collidable
                 critTextMultiSize = 1.5f;
                 hitLandOnEnemySFX = "CritPlayerHit";
             }
-
-            object[] tempStorage = new object[2];
             
 
             coll.SendMessage("ReceiveDamage", dmg);

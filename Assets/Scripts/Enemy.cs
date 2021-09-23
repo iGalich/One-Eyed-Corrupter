@@ -14,7 +14,7 @@ public class Enemy : Mover
     [SerializeField] protected float triggerLength = 1;
     [SerializeField] private float chaseLength = 5;
 
-    [SerializeField] private GameObject deathParticles;
+    [SerializeField] protected GameObject deathParticles;
 
     private bool chasing;
     protected bool collidingWithPlayer;
@@ -36,7 +36,7 @@ public class Enemy : Mover
         base.Start();
         deathParticles.GetComponent<ParticleSystem>().Stop();
         playerTransform = GameManager.instance.player.transform;
-        hitbox = transform.GetChild(0).GetComponent<BoxCollider2D>();
+        hitbox = transform.GetChild(0).GetComponent<BoxCollider2D>(); // potetial error place don't forget
     }
     private void ReturnToPlace()
     {

@@ -18,4 +18,8 @@ public class FireballEnemy : Enemy
         fireballBoss.DecreaseFireballCount();
         fireballBoss.IncreaseFireballSpeed(addSpeed);
     }
+    private void Destroy()
+    {
+        Destroy(this.gameObject);
+    }
 }
