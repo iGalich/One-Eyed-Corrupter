@@ -49,7 +49,7 @@ public class Enemy : Mover
         // is the player in range
         if (Vector3.Distance(playerTransform.position, startingPosition) < chaseLength)
         {
-            if (Vector3.Distance(playerTransform.position, startingPosition) < triggerLength)
+            if (Vector3.Distance(playerTransform.position, transform.position) < triggerLength)
             {
                 chasing = true;
                 GameManager.instance.player.SetInCombat(true);
@@ -119,5 +119,9 @@ public class Enemy : Mover
         if (pesosValue > 0)
             GameManager.instance.GrantPesos(pesosValue);
         GameManager.instance.ShowText("+" + xpValue + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 20, 2.0f);
+    }
+    public bool isChasing()
+    {
+        return chasing;
     }
 }

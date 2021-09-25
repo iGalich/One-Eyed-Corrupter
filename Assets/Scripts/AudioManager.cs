@@ -10,6 +10,9 @@ public class AudioManager : MonoBehaviour
 
     private string currentlyPlaying;
 
+    private float minPitch = 0.7f;
+    private float maxPitch = 1.6f;
+
     private void Awake()
     {
         Instance = this;
@@ -55,6 +58,11 @@ public class AudioManager : MonoBehaviour
         if (s.isMusic)
             currentlyPlaying = name;
 
+        if (s.isCommonSFX)
+        {
+            s.source.pitch = new RandomFloat().NextFloat(minPitch, maxPitch);
+        }
+
         s.source.Play();
     }
     public void Mute (string name)
@@ -73,4 +81,5 @@ public class AudioManager : MonoBehaviour
     {
         return currentlyPlaying;
     }
+    
 }

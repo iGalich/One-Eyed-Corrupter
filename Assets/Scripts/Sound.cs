@@ -10,6 +10,7 @@ public class Sound
 
     public bool loop;
     public bool isMusic;
+    public bool isCommonSFX;
 
     [Range(0f, 1f)] public float volume;
     [Range(-3f, 3f)] public float pitch;

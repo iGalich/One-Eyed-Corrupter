@@ -12,10 +12,12 @@ public class EnemyHitbox : Collidable
 
     [SerializeField] protected float pushForce = 5f;
 
-    [SerializeField] protected float PushForce => pushForce;
+    [SerializeField] private bool noKnockback;
+
+    protected float PushForce => pushForce;
     protected override void OnCollide(Collider2D coll)
     {
-        if (coll.tag == "Fighter" && coll.name == "Player")
+        if (coll.tag == "Fighter" && coll.name == "Player" && !noKnockback)
         {
             // create new damage object before sending it to the player
             Damage dmg = new Damage()

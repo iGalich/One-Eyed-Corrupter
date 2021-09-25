@@ -38,7 +38,6 @@ public class Weapon : Collidable
     [SerializeField] private float shake = 0.5f;
     [SerializeField] private Transform cam;
 
-
     protected override void Start()
     {
         base.Start();

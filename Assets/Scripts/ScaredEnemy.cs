@@ -24,7 +24,7 @@ public class ScaredEnemy : Enemy
         coinParticles.GetComponent<ParticleSystem>().Stop();
     }
     protected override void ReceiveDamage(Damage dmg)
-    {
+    { 
         if (!isGolden)
             base.ReceiveDamage(dmg);
 
@@ -56,6 +56,15 @@ public class ScaredEnemy : Enemy
             }
         }
 
+        // When hit, will run in sudden random direction, to avoid player abusing corners
+        if (hitpoint > 0)
+        {
+            var x = new RandomFloat().NextFloat(-1f, 1f);
+            var y = new RandomFloat().NextFloat(-1f, 1f);
+            var direction = new Vector3(x, y, 0f);
+            ApplyKnockback(direction);
+        }
+
         if (hitpoint <= 0)
         {
             hitpoint = 0;
@@ -67,7 +76,7 @@ public class ScaredEnemy : Enemy
         // is the player in range
         if (Vector3.Distance(playerTransform.position, startingPosition) < runAwayLength)
         {
-            if (Vector3.Distance(playerTransform.position, startingPosition) < runAwayTrigger)
+            if (Vector3.Distance(playerTransform.position, transform.position) < runAwayTrigger)
             {
                 isRunningAway = true;
                 GameManager.instance.player.SetInCombat(true);

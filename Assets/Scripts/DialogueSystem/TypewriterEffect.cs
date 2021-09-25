@@ -58,6 +58,14 @@ public class TypewriterEffect : MonoBehaviour
                 talkSound.source.pitch = talkSound.pitch;
                 talkSound.source.loop = talkSound.loop;
 
+                if (Random.value > 0.5)
+                {
+                    if (Random.value > 0.5)
+                        talkSound.source.pitch += 0.15f;
+                    else
+                        talkSound.source.pitch -= 0.15f;
+                }
+
                 talkSound.source.Play();
 
                 if (IsPunctuation(textToType[i], out float waitTime) && !isLast && !IsPunctuation(textToType[i + 1], out _))
