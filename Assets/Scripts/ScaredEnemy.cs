@@ -21,7 +21,8 @@ public class ScaredEnemy : Enemy
     {
         base.Start();
         coinSFX = GetComponent<AudioSource>();
-        coinParticles.GetComponent<ParticleSystem>().Stop();
+        if (coinParticles != null)
+            coinParticles.GetComponent<ParticleSystem>().Stop();
     }
     protected override void ReceiveDamage(Damage dmg)
     { 
@@ -73,8 +74,10 @@ public class ScaredEnemy : Enemy
     }
     protected override void FixedUpdate()
     {
+        var dis = Vector3.Distance(playerTransform.position, startingPosition);
+        if (dis < runAwayLength)
         // is the player in range
-        if (Vector3.Distance(playerTransform.position, startingPosition) < runAwayLength)
+        //if (Vector3.Distance(playerTransform.position, startingPosition) < runAwayLength)
         {
             if (Vector3.Distance(playerTransform.position, transform.position) < runAwayTrigger)
             {

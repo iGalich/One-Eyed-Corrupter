@@ -152,6 +152,7 @@ public class Weapon : Collidable
     }
     public void UpgradeWeapon()
     {
+        AudioManager.Instance.Play("UpgradeSword");
         weaponLevel++;
         spriteRenderer.sprite = GameManager.instance.weaponSprites[weaponLevel];
 

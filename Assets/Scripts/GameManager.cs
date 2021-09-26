@@ -80,6 +80,9 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
+        if (Time.timeScale != 1) //TODO remove this
+            Debug.Log(Time.timeScale);
+
         SyncBar();
     }
     public Animator GetInventoryMenuAnim()

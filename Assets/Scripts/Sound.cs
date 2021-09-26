@@ -11,6 +11,7 @@ public class Sound
     public bool loop;
     public bool isMusic;
     public bool isCommonSFX;
+    public bool spatialBlend3D;
 
     [Range(0f, 1f)] public float volume;
     [Range(-3f, 3f)] public float pitch;

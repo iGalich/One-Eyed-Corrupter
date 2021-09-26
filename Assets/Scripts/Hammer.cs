@@ -23,15 +23,11 @@ public class Hammer : EnemyHitbox
         base.Update();
 
         if (parentEnemy.isChasing())
-        {
             anim.SetBool("PlayerInRange", true);
-        }
         else
             anim.SetBool("PlayerInRange", false);
 
         if (parentEnemy.hitpoint <= parentEnemy.maxHitpoint / 3)
-        {
             anim.SetFloat("SwingMultiplier", animationMultiplier);
-        }
     }
 }
