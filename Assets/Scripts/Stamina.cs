@@ -34,7 +34,7 @@ public class Stamina : MonoBehaviour
         regenTick = new WaitForSeconds(staminaRegenCooldown);
         currStamina = maxStamina;
     }
-    private void Update()
+    private void FixedUpdate()
     {
         if (Instance == null)
             Instance = this;

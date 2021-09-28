@@ -30,6 +30,7 @@ public class Player : Mover
     private bool inCombat;
     private bool graceHit;
     private bool graceHitUsed;
+    private bool healSfxPlayed;
 
     private float lastHeal;
     private float dashTimeLeft;
@@ -59,6 +60,8 @@ public class Player : Mover
         // checks if player is under 50% health, and heals to 50% overtime
         if (hitpoint < maxHitpoint / 2 && isAlive && !inCombat && Time.time - lastImmune > 5f)
             AutoHeal();
+        else if (healSfxPlayed)
+            healSfxPlayed = false;
 
         // TODO remove before final build
         // currently here for bug cases
@@ -261,6 +264,7 @@ public class Player : Mover
     public void OnLevelUp()
     {
         levelUpParticles.Play();
+        AudioManager.Instance.Play("LevelUp");
         maxHitpoint++;
         hitpoint = maxHitpoint; 
     }
@@ -285,9 +289,15 @@ public class Player : Mover
         {
             lastHeal = Time.time;
             GameManager.instance.player.Heal(1);
-            AudioManager.Instance.Play("HealthRegen");
+            if (!healSfxPlayed)
+            {
+                AudioManager.Instance.Play("HealthRegen");
+                healSfxPlayed = true;
+            }
+            else
+                healSfxPlayed = false;
         }
-        if (graceHitUsed)
+        if (graceHitUsed || graceHit)
         {
             graceHitUsed = false;
             graceHit = false;

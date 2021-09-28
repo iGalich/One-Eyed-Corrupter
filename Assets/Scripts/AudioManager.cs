@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using System;
@@ -13,6 +15,13 @@ public class AudioManager : MonoBehaviour
     private float minPitch = 0.7f;
     private float maxPitch = 1.6f;
 
+    private float pitchChangePerTick = 0.001f;
+
+    private Coroutine pitchCoroutine;
+
+    private WaitForSecondsRealtime tick = new WaitForSecondsRealtime(0.1f);
+
+    private float CurrPitch => FindSound(GetCurrentlyPlaying()).source.pitch;
     private void Awake()
     {
         Instance = this;
@@ -36,7 +45,7 @@ public class AudioManager : MonoBehaviour
     }
     public Sound FindSound(string name)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name));
 
         if (s == null)
             Debug.LogWarning("Sound: " + name + " was not found. Please check typo :)");
@@ -45,7 +54,7 @@ public class AudioManager : MonoBehaviour
     }
     public void Play (string name)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name));
 
         if (s == null)
         {
@@ -53,7 +62,10 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        if (name != GetCurrentlyPlaying() && s.isMusic)
+        if (name.Equals(GetCurrentlyPlaying()))
+            return;
+
+        if (!name.Equals(GetCurrentlyPlaying()) && s.isMusic && GetCurrentlyPlaying() != null)
         {
             Mute(GetCurrentlyPlaying());
         }
@@ -70,7 +82,7 @@ public class AudioManager : MonoBehaviour
     }
     public void Mute (string name)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name));
 
         if (s == null)
         {
@@ -84,5 +96,56 @@ public class AudioManager : MonoBehaviour
     {
         return currentlyPlaying;
     }
-    
+    public void ChangePitch(float target, float duration)
+    {
+        if (pitchCoroutine != null)
+            StopCoroutine(pitchCoroutine);
+
+        if (duration <= Mathf.Epsilon && duration > 0)
+            SetPitch(target);
+
+        pitchCoroutine = StartCoroutine(ChangePitchCo(target, duration));
+    }
+    private IEnumerator ChangePitchCo(float target, float duration)
+    {
+        float from = CurrPitch;
+        float invDuration = 1.0f / duration;
+
+        float progress = Time.unscaledDeltaTime * invDuration;
+
+        while(Mathf.Abs(CurrPitch - target) > 0.0f)
+        {
+            FindSound(GetCurrentlyPlaying()).source.pitch = Mathf.Lerp(from, target, progress);
+            progress += Time.unscaledDeltaTime * invDuration;
+            yield return null;
+        }
+
+        //if (s.source.pitch >= p)
+        //{
+        //    while (s.source.pitch > p)
+        //    {
+        //        s.source.pitch -= pitchChangePerTick;
+        //        yield return tick;
+        //    }
+        //    if (s.source.pitch < p)
+        //        s.source.pitch = p;
+        //}
+        //else if (s.source.pitch <= p)
+        //{
+        //    while (s.source.pitch < p)
+        //    {
+        //        s.source.pitch += pitchChangePerTick;
+        //        yield return tick;
+        //    }
+        //    if (s.source.pitch > p)
+        //        s.source.pitch = p;
+        //}
+    }
+    private void SetPitch(float pitch)
+    {
+        if (pitchCoroutine != null)
+            StopCoroutine(pitchCoroutine);
+
+        FindSound(GetCurrentlyPlaying()).source.pitch = pitch;
+    }
 }

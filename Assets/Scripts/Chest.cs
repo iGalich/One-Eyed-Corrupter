@@ -8,6 +8,7 @@ public class Chest : Collectable
 
     [SerializeField] private int pesosAmount = 5;
 
+    public int PesosAmount => pesosAmount;
     protected override void OnCollect()
     {
         if (!collected)

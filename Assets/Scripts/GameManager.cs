@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 60;
 
         if (GameManager.instance != null)
         {
@@ -66,12 +66,12 @@ public class GameManager : MonoBehaviour
         if (menu.activeSelf == false)
             menu.SetActive(true);
         if (dialogue.activeSelf == false)
-            dialogue.SetActive(true);     
+            dialogue.SetActive(true);
 
         instance = this;
         SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
-
+        
         UpdateSceneMusicPlayer();
     }
     private void Start()
@@ -109,7 +109,6 @@ public class GameManager : MonoBehaviour
     {
         floatingTextManager.Show(msg, fontSize, color, position, motion, duration);
     }
-
     // upgrade weapon
     public bool TryUpgradeWeapon()
     {
@@ -176,9 +175,9 @@ public class GameManager : MonoBehaviour
     }
     public void OnLevelUp()
     {
-        ShowText("Level " + GameManager.instance.GetCurrentLevel().ToString(), 50, Color.yellow, player.transform.position + new Vector3(0, 0.48f, 0), Vector3.up * 15, 2.5f);
-        ShowText("Max Health Increased", 40, Color.red, player.transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 15, 2.5f);
-        ShowText("Health fully restored", 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 2.5f);
+        ShowText("Level " + GameManager.instance.GetCurrentLevel().ToString(), 50, Color.yellow, player.transform.position + new Vector3(0, 0.48f, 0), Vector3.up * 15, 5.5f);
+        ShowText("Max Health Increased", 40, Color.red, player.transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 15, 5.5f);
+        ShowText("Health fully restored", 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 5.5f);
         player.OnLevelUp();
         OnHitpointChange();
     }
