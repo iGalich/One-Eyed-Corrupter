@@ -21,7 +21,7 @@ public class AreaWarning : MonoBehaviour
     private float easyAreaPitch = 1f;
     private float normalAreaPitch = 0.75f;
     private float hardAreaPitch = 0.5f;
-    private float pitchChangeDuration = 0.5f;
+    private float pitchChangeDuration = 0.2f;
 
 
     private void OnTriggerEnter2D(Collider2D collision)
