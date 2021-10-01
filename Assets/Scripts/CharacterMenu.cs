@@ -108,7 +108,7 @@ public class CharacterMenu : MonoBehaviour
                 GameManager.instance.CanClickInvetnory(true);
                 menuIsOpen = false;
                 break;
-            
+
         }
     }
 }

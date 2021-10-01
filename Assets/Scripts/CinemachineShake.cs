@@ -16,6 +16,8 @@ public class CinemachineShake : MonoBehaviour
 
     [SerializeField] private float cameraShakeIntensity = 5f;
 
+    public bool IsShaking { get => isShaking; set => isShaking = value; }
+
     private void Start()
     {
         Insatnce = this;
@@ -42,6 +44,11 @@ public class CinemachineShake : MonoBehaviour
                 CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin = vcam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
                 cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = Mathf.Lerp(startingIntensity, 0f, 1 - (shakeTimer / shakeTimerTotal));
             }
+        }
+        isShaking = false;
+        if (!isShaking)
+        {
+            ShakeCamera(0f, 0.1f);
         }
     }
     public float GetCameraShakeIntensity() { return cameraShakeIntensity; }

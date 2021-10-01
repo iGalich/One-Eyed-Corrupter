@@ -40,10 +40,10 @@ public class Player : Mover
 
     private int bloodDropAmount = 100;
 
-
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
-
+    public bool InCombat => InCombat;
+    public bool isInCombat() { return inCombat; }
     protected override void Start()
     {
         base.Start();
@@ -69,7 +69,7 @@ public class Player : Mover
             GameManager.instance.Respawn();
 
         // E button is used to interact with npcs
-        if (Input.GetKeyDown(KeyCode.E) && !DialogueUI.IsOpen && isAlive)
+        if (Input.GetKeyDown(KeyCode.E) && !DialogueUI.IsOpen && isAlive && !inCombat)
             Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
 
         // dash button
@@ -109,14 +109,14 @@ public class Player : Mover
             {
                 if (canBeHit)
                 {
-                    lastImmune = Time.time;
                     hitpoint -= dmg.damageAmount;
                     pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
-                    canBeHit = false;
-                    StartCoroutine(BecomeTemporarilyInvincible());
                     AudioManager.Instance.Play(receivedDamaged);
                     if (dmg.damageAmount > 0)
                     {
+                        canBeHit = false;
+                        lastImmune = Time.time;
+                        StartCoroutine(BecomeTemporarilyInvincible());
                         main.maxParticles *= dmg.damageAmount;
                         bloodParticles.GetComponent<ParticleSystem>().Play();
                         GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
@@ -159,13 +159,13 @@ public class Player : Mover
             else if (canBeHit && !graceHitUsed && graceHit)
             {
 
-                lastImmune = Time.time;
                 pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
-                canBeHit = false;
-                StartCoroutine(BecomeTemporarilyInvincible());
                 AudioManager.Instance.Play(receivedDamaged);
                 if (dmg.damageAmount > 0)
                 {
+                    canBeHit = false;
+                    lastImmune = Time.time;
+                    StartCoroutine(BecomeTemporarilyInvincible());
                     main.maxParticles *= dmg.damageAmount;
                     bloodParticles.GetComponent<ParticleSystem>().Play();
                     GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);

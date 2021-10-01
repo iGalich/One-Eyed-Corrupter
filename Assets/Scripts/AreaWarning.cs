@@ -10,6 +10,8 @@ public class AreaWarning : MonoBehaviour
         Hard,
     }
 
+    private Player player;
+
     [SerializeField] private AreaLevel areaLevel;
 
     [SerializeField] private bool showWarning;
@@ -23,7 +25,10 @@ public class AreaWarning : MonoBehaviour
     private float hardAreaPitch = 0.5f;
     private float pitchChangeDuration = 0.2f;
 
-
+    private void Start()
+    {
+        player = GameManager.instance.player;
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.name == "Player")
@@ -61,7 +66,8 @@ public class AreaWarning : MonoBehaviour
                       break;
 
                     case AreaLevel.Safe:
-                        GameManager.instance.ShowText("I sense no danger in this area", 30, Color.white, collision.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, warningDuration);
+                        if (!player.InCombat)
+                            GameManager.instance.ShowText("I sense no danger in this area", 30, Color.white, collision.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, warningDuration);
                         break;
                 }
             }

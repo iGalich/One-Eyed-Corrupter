@@ -15,8 +15,6 @@ public class AudioManager : MonoBehaviour
     private float minPitch = 0.7f;
     private float maxPitch = 1.6f;
 
-    private float pitchChangePerTick = 0.001f;
-
     private Coroutine pitchCoroutine;
 
     private WaitForSecondsRealtime tick = new WaitForSecondsRealtime(0.1f);

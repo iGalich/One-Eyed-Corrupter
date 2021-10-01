@@ -7,9 +7,6 @@ public class Enemy : Mover
     // experience worth
     [SerializeField] private int xpValue = 1;
 
-    //gold worth
-    [SerializeField] private int pesosValue;
-
     // logic
     [SerializeField] protected float triggerLength = 1;
     [SerializeField] private float chaseLength = 5;
@@ -37,6 +34,8 @@ public class Enemy : Mover
         deathParticles.GetComponent<ParticleSystem>().Stop();
         playerTransform = GameManager.instance.player.transform;
         hitbox = transform.GetChild(0).GetComponent<BoxCollider2D>(); // potetial error place don't forget
+
+        chaseLength *= 2;
     }
     private void ReturnToPlace()
     {
@@ -47,9 +46,9 @@ public class Enemy : Mover
         if (isDummy && startingPosition != transform.position)
             ReturnToPlace();
         // is the player in range
-        if (Vector3.Distance(playerTransform.position, startingPosition) < chaseLength)
+        if (Vector3.Distance(playerTransform.position, transform.position) < triggerLength)
         {
-            if (Vector3.Distance(playerTransform.position, transform.position) < triggerLength)
+            if (Vector3.Distance(playerTransform.position, transform.position) < chaseLength)
             {
                 chasing = true;
                 GameManager.instance.player.SetInCombat(true);
@@ -116,8 +115,6 @@ public class Enemy : Mover
         Destroy(gameObject);
         GameManager.instance.player.SetInCombat(false);
         GameManager.instance.GrantXp(xpValue);
-        if (pesosValue > 0)
-            GameManager.instance.GrantPesos(pesosValue);
         GameManager.instance.ShowText("+" + xpValue + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 20, 2.0f);
     }
     public bool isChasing()

@@ -11,10 +11,11 @@ public class Stamina : MonoBehaviour
 
     [SerializeField] private RectTransform frontStaminaBar;
 
-    [SerializeField] private float staminaRegenCooldown = 0.1f;
     [SerializeField] private float shakeAmount;
 
-    private const int staminaCost = 100;
+    private const float STAMINA_REGEN_COOLDOWN = 0.02f;
+
+    private const int STAMINA_COST = 100;
 
     private float staminaRatio;
     private float currStamina;
@@ -31,7 +32,7 @@ public class Stamina : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        regenTick = new WaitForSeconds(staminaRegenCooldown);
+        regenTick = new WaitForSeconds(STAMINA_REGEN_COOLDOWN);
         currStamina = maxStamina;
     }
     private void FixedUpdate()
@@ -51,7 +52,7 @@ public class Stamina : MonoBehaviour
     }
     public void OnStaminaUse()
     {
-        currStamina -= staminaCost;
+        currStamina -= STAMINA_COST;
         if (currStamina < 0)
             currStamina = 0;
         staminaRatio = currStamina / maxStamina;
@@ -59,7 +60,7 @@ public class Stamina : MonoBehaviour
     }
     public bool CheckStamina()
     {
-        if (currStamina - staminaCost >= 0)
+        if (currStamina - STAMINA_COST >= 0)
             return true;
         else return false;
     }

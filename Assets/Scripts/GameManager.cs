@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
             dialogue.SetActive(true);
 
         instance = this;
+
         SceneManager.sceneLoaded += LoadState;
         SceneManager.sceneLoaded += OnSceneLoaded;
         
@@ -80,9 +81,6 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        if (Time.timeScale != 1) //TODO remove this
-            Debug.Log(Time.timeScale);
-
         SyncBar();
     }
     public Animator GetInventoryMenuAnim()
