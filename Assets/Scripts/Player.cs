@@ -23,6 +23,8 @@ public class Player : Mover
 
     [SerializeField] private string receivedDamaged = "PlayerGotHit";
 
+    [SerializeField] private bool autoHealOn;
+
     ParticleSystem.MainModule main;
 
     private bool isAlive = true;
@@ -39,11 +41,15 @@ public class Player : Mover
     private float lastDash = float.MinValue;
 
     private int bloodDropAmount = 100;
+    private int maxHitpointIncreasePerLevel = 3;
+    private int healthRestoreOnLevelUp = 5;
 
+    public int HealthRestoreOnLevelUp => healthRestoreOnLevelUp;
+    public int MaxHitPointIncreasePerLevel => maxHitpointIncreasePerLevel;
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
     public bool InCombat => InCombat;
-    public bool isInCombat() { return inCombat; }
+    public bool IsInCombat() { return inCombat; }
     protected override void Start()
     {
         base.Start();
@@ -58,10 +64,13 @@ public class Player : Mover
         base.Update();
 
         // checks if player is under 50% health, and heals to 50% overtime
-        if (hitpoint < maxHitpoint / 2 && isAlive && !inCombat && Time.time - lastImmune > 5f)
-            AutoHeal();
-        else if (healSfxPlayed)
-            healSfxPlayed = false;
+        if (autoHealOn)
+        {
+            if (hitpoint < maxHitpoint / 2 && isAlive && !inCombat && Time.time - lastImmune > 5f)
+                AutoHeal();
+            else if (healSfxPlayed)
+                healSfxPlayed = false;
+        }
 
         // TODO remove before final build
         // currently here for bug cases
@@ -81,6 +90,14 @@ public class Player : Mover
 
         if (!bloodParticles.GetComponent<ParticleSystem>().isPlaying)
             main.maxParticles = 100;
+    }
+    public void CorrectMaxHitPoint(int levelGap)
+    {
+        maxHitpoint += maxHitpointIncreasePerLevel * (levelGap - 2);
+        if (GameManager.instance.GetCurrentLevel() == 10)
+            maxHitpoint += 3;
+        if (hitpoint > maxHitpoint)
+            hitpoint = maxHitpoint;
     }
     private void FixedUpdate()
     {
@@ -112,11 +129,11 @@ public class Player : Mover
                     hitpoint -= dmg.damageAmount;
                     pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
                     AudioManager.Instance.Play(receivedDamaged);
+                    lastImmune = Time.time;
+                    StartCoroutine(BecomeTemporarilyInvincible());
                     if (dmg.damageAmount > 0)
                     {
                         canBeHit = false;
-                        lastImmune = Time.time;
-                        StartCoroutine(BecomeTemporarilyInvincible());
                         main.maxParticles *= dmg.damageAmount;
                         bloodParticles.GetComponent<ParticleSystem>().Play();
                         GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
@@ -161,11 +178,11 @@ public class Player : Mover
 
                 pushDirection = (transform.position - dmg.origin).normalized * dmg.pushForce;
                 AudioManager.Instance.Play(receivedDamaged);
+                lastImmune = Time.time;
+                StartCoroutine(BecomeTemporarilyInvincible());
                 if (dmg.damageAmount > 0)
                 {
                     canBeHit = false;
-                    lastImmune = Time.time;
-                    StartCoroutine(BecomeTemporarilyInvincible());
                     main.maxParticles *= dmg.damageAmount;
                     bloodParticles.GetComponent<ParticleSystem>().Play();
                     GameManager.instance.ShowText(dmg.damageAmount.ToString(), (int)(35 * GameManager.instance.weapon.GetDashTextMulti() * GameManager.instance.weapon.GetCritTextMulti()), Color.red, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 20, 1.5f);
@@ -265,8 +282,12 @@ public class Player : Mover
     {
         levelUpParticles.Play();
         AudioManager.Instance.Play("LevelUp");
-        maxHitpoint++;
-        hitpoint = maxHitpoint; 
+        if (GameManager.instance.GetCurrentLevel() == 10)
+            maxHitpoint += 3;
+        maxHitpoint += maxHitpointIncreasePerLevel;
+        hitpoint += healthRestoreOnLevelUp;
+        if (hitpoint > maxHitpoint)
+            hitpoint = maxHitpoint;
     }
     public void SetLevel(int level)
     {

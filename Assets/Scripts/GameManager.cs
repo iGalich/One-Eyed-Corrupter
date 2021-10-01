@@ -163,20 +163,44 @@ public class GameManager : MonoBehaviour
     public void GrantXp(int xp)
     {
         int currLevel = GetCurrentLevel();
+        int prevLevel = currLevel;
         experience += xp;
         if (currLevel < GetCurrentLevel())
-            OnLevelUp();
+            OnLevelUp(prevLevel);
     }
     public void SetXp(int xp)
     {
         experience = xp;
     }
-    public void OnLevelUp()
+    public void OnLevelUp(int prevLevel)
     {
-        ShowText("Level " + GameManager.instance.GetCurrentLevel().ToString(), 50, Color.yellow, player.transform.position + new Vector3(0, 0.48f, 0), Vector3.up * 15, 5.5f);
-        ShowText("Max Health Increased", 40, Color.red, player.transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 15, 5.5f);
-        ShowText("Health fully restored", 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 5.5f);
         player.OnLevelUp();
+        if (GetCurrentLevel() == 10)
+        {
+            ShowText("Max Level", 50, Color.yellow, player.transform.position + new Vector3(0, 0.48f, 0), Vector3.up * 15, 5.5f);
+            ShowText("Max Health Increased by " + (player.MaxHitPointIncreasePerLevel + 3), 30, Color.red, player.transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 15, 5.5f);
+            if (player.hitpoint == player.maxHitpoint)
+                ShowText("Health fully restored", 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 5.5f);
+            else
+                ShowText("Health restored by " + player.HealthRestoreOnLevelUp, 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 5.5f);
+        }
+        else
+        {
+            ShowText("Level " + GameManager.instance.GetCurrentLevel().ToString(), 50, Color.yellow, player.transform.position + new Vector3(0, 0.48f, 0), Vector3.up * 15, 5.5f);
+            ShowText("Max Health Increased by " + player.MaxHitPointIncreasePerLevel, 30, Color.red, player.transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 15, 5.5f);
+            if (player.hitpoint == player.maxHitpoint)
+                ShowText("Health fully restored", 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 5.5f);
+            else
+                ShowText("Health restored by " + player.HealthRestoreOnLevelUp, 30, Color.green, player.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 5.5f);
+        }
+        if (GetCurrentLevel() - prevLevel > 1)
+        {
+            int levelGap = GetCurrentLevel() - prevLevel;
+            player.CorrectMaxHitPoint(levelGap);
+            player.hitpoint += (levelGap - 1) * player.HealthRestoreOnLevelUp;
+            if (player.hitpoint > player.maxHitpoint)
+                player.hitpoint = player.maxHitpoint;
+        }
         OnHitpointChange();
     }
 
@@ -199,7 +223,7 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("Tutorial");
         player.Respawn();
         AudioManager.Instance.Mute("PlayerDeath");
-        AudioManager.Instance.Play(AudioManager.Instance.GetCurrentlyPlaying());
+        AudioManager.Instance.Play("TutorialLevel");
     }
 
     // save state

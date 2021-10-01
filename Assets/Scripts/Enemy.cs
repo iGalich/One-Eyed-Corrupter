@@ -18,6 +18,8 @@ public class Enemy : Mover
 
     private float lastHeal;
     private float healCooldown = 2f;
+    private float originalChaseLength;
+    private float cutChaseLength;
 
     protected Transform playerTransform;
 
@@ -34,8 +36,11 @@ public class Enemy : Mover
         deathParticles.GetComponent<ParticleSystem>().Stop();
         playerTransform = GameManager.instance.player.transform;
         hitbox = transform.GetChild(0).GetComponent<BoxCollider2D>(); // potetial error place don't forget
+        originalChaseLength = chaseLength;
 
-        chaseLength *= 2;
+        chaseLength /= 3f;
+        cutChaseLength = chaseLength;
+        triggerLength = chaseLength;
     }
     private void ReturnToPlace()
     {
@@ -64,6 +69,7 @@ public class Enemy : Mover
             else
             {
                 UpdateMotor(startingPosition - transform.position);
+                chasing = false;
             }
         }
         else
@@ -94,6 +100,16 @@ public class Enemy : Mover
     protected override void Update()
     {
         base.Update();
+        if (chasing)
+        {
+            chaseLength = originalChaseLength / 2f;
+            triggerLength = originalChaseLength / 2f;
+        }
+        else
+        {
+            chaseLength = cutChaseLength;
+            triggerLength = cutChaseLength;
+        }
         if (hitpoint < maxHitpoint && Time.time - lastImmune > 5f && !chasing)
             AutoHeal();
     }
