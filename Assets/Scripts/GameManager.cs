@@ -207,9 +207,17 @@ public class GameManager : MonoBehaviour
     //grant pesos
     public void GrantPesos(int pesosAmount)
     {
-        pesos += pesosAmount;
-        ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
-        AudioManager.Instance.Play("GotPesos");
+        if (pesosAmount > 0)
+        {
+            pesos += pesosAmount;
+            ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
+            AudioManager.Instance.Play("GotPesos");
+        }
+        else if (pesosAmount < 0)
+        {
+            pesos += pesosAmount;
+            ShowText(pesosAmount + " pesos", 30, Color.red, player.transform.position - new Vector3(0 ,0.16f, 0) , Vector3.up * 25, 2.5f);
+        }
     }
     public void SetPesos(int pesosAmount)
     {

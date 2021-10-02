@@ -9,8 +9,6 @@ public class ScaredEnemy : Enemy
     [SerializeField] private float runAwayTrigger = 1;
     [SerializeField] private float runAwayLength = 5;
 
-    [SerializeField] private int healOnDeath = 2;
-
     [SerializeField] private bool isGolden;
 
     [SerializeField] private GameObject coinParticles;
@@ -107,7 +105,7 @@ public class ScaredEnemy : Enemy
     protected override void Death()
     {
         if (!isGolden)
-            GameManager.instance.player.Heal(healOnDeath);
+            GameManager.instance.player.Heal(Random.Range(1, GameManager.instance.GetCurrentLevel() + 1));
         else
             GameManager.instance.GrantPesos(Random.Range(10, 101));
         base.Death();

@@ -44,11 +44,12 @@ public class Player : Mover
     private int maxHitpointIncreasePerLevel = 3;
     private int healthRestoreOnLevelUp = 5;
 
+    public bool IsAlive => isAlive;
     public int HealthRestoreOnLevelUp => healthRestoreOnLevelUp;
     public int MaxHitPointIncreasePerLevel => maxHitpointIncreasePerLevel;
     public DialogueUI DialogueUI => dialogueUI;
     public IInteractable Interactable { get; set; }
-    public bool InCombat => InCombat;
+    public bool InCombat => inCombat;
     public bool IsInCombat() { return inCombat; }
     protected override void Start()
     {
@@ -337,6 +338,8 @@ public class Player : Mover
         GameManager.instance.OnHitpointChange();
         graceHitUsed = false;
         graceHit = false;
+        GameManager.instance.weapon.SetDamage(1);
+        GameManager.instance.weapon.damagePoint[6] = 7;
     }
     public int GetCurrHealth()
     {

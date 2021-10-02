@@ -58,12 +58,34 @@ public class Weapon : Collidable
 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if (Time.time - lastSwing > cooldown)
+            if (Time.time - lastSwing > cooldown && GameManager.instance.player.IsAlive)
             {
                 lastSwing = Time.time;
                 Swing();
             }
         }
+
+        AddDamageBasedOnPesos();
+    }
+    private void AddDamageBasedOnPesos()
+    {
+        if (GameManager.instance.weapon.weaponLevel == GameManager.instance.weaponPrices.Count)
+        {
+            if (GameManager.instance.pesos >= 100)
+            {
+                GameManager.instance.GrantPesos(-100);
+                GameManager.instance.ShowText("Damage Increased", 30, Color.yellow, GameManager.instance.player.transform.position - new Vector3(0, 0.32f, 0), Vector3.up * 25, 3f);
+                IncreaseWeaponDamage();
+            }
+        }
+    }
+    private void IncreaseWeaponDamage()
+    {
+        GameManager.instance.weapon.damagePoint[6]++;
+    }
+    public void SetDamage(int damage)
+    {
+        damagePoint[0] = damage;
     }
     protected override void OnCollide(Collider2D coll)
     {
