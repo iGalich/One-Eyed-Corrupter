@@ -50,6 +50,8 @@ public class ScreenOutline : MonoBehaviour
         }
         if (outlineImage.color.r <= 0)
         {
+            Color newColor = new Color(0, 0, 0);
+            outlineImage.color = newColor;
             isChangingColor = false;
             yield return null;
         }
@@ -77,7 +79,7 @@ public class ScreenOutline : MonoBehaviour
                 outlineImage.color = Color.black;
                 isChangingColor = false;
             }
-
+            
             yield return colorChangeTick;
         }
     }

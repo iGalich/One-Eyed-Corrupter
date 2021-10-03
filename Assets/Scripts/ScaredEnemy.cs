@@ -15,6 +15,8 @@ public class ScaredEnemy : Enemy
 
     private AudioSource coinSFX;
 
+    private bool isAlive = true;
+
     protected override void Start()
     {
         base.Start();
@@ -24,10 +26,10 @@ public class ScaredEnemy : Enemy
     }
     protected override void ReceiveDamage(Damage dmg)
     { 
-        if (!isGolden)
+        if (!isGolden && hitpoint > 0)
             base.ReceiveDamage(dmg);
 
-        if (canBeHit && isGolden)
+        if (canBeHit && isGolden && hitpoint > 0)
         {
             lastImmune = Time.time;
             hitpoint -= dmg.damageAmount;
@@ -104,10 +106,18 @@ public class ScaredEnemy : Enemy
     }
     protected override void Death()
     {
-        if (!isGolden)
-            GameManager.instance.player.Heal(Random.Range(1, GameManager.instance.GetCurrentLevel() + 1));
-        else
-            GameManager.instance.GrantPesos(Random.Range(10, 101));
-        base.Death();
+        if (isAlive)
+        {
+            if (!isGolden)
+                GameManager.instance.player.Heal(Random.Range(1, GameManager.instance.GetCurrentLevel() + 1));
+            else
+                GameManager.instance.GrantPesos(Random.Range(10, 101));
+            Instantiate(deathParticles, transform.position, transform.rotation);
+            Destroy(gameObject);
+            GameManager.instance.player.SetInCombat(false);
+            GameManager.instance.GrantXp(xpValue);
+            GameManager.instance.ShowText("+" + xpValue + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 20, 2.0f);
+            isAlive = false;
+        }
     }
 }

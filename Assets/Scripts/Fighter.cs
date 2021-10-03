@@ -56,7 +56,7 @@ public class Fighter : MonoBehaviour
     // all fighers can receive damage and die
     protected virtual void ReceiveDamage(Damage dmg)
     {
-        if (canBeHit)
+        if (canBeHit && hitpoint > 0)
         {
             lastImmune = Time.time;
             hitpoint -= dmg.damageAmount;

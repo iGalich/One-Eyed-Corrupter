@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : Mover
 {
     // experience worth
-    [SerializeField] private int xpValue = 1;
+    [SerializeField] protected int xpValue = 1;
 
     // logic
     [SerializeField] protected float triggerLength = 1;

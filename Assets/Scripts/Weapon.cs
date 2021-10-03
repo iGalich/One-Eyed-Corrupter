@@ -126,15 +126,19 @@ public class Weapon : Collidable
     }
     private void Swing()
     {
-        anim.SetTrigger("Swing");
-        switch (weaponLevel)
+        if (!GameManager.instance.menu.MenuIsOpen)
         {
-            case 0:
-                AudioManager.Instance.Play("SwordSwingWooden");
-                break;
-            default:
-                AudioManager.Instance.Play("SwordSwingNormal");
-                break;
+            GameManager.instance.menu.HideInventory();
+            anim.SetTrigger("Swing");
+            switch (weaponLevel)
+            {
+                case 0:
+                    AudioManager.Instance.Play("SwordSwingWooden");
+                    break;
+                default:
+                    AudioManager.Instance.Play("SwordSwingNormal");
+                    break;
+            }
         }
     }
     public void TimeStop()

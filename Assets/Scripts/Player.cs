@@ -63,7 +63,6 @@ public class Player : Mover
     protected override void Update()
     {
         base.Update();
-
         // checks if player is under 50% health, and heals to 50% overtime
         if (autoHealOn)
         {
@@ -216,9 +215,10 @@ public class Player : Mover
     {
         while (hitpoint == 1)
         {
+            AudioManager.Instance.Play("Heartbeat");
             iTween.ShakePosition(entireHealthBar, Vector3.one * shakeAmount, 0.5f);
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1.5f);
         }
     }
     private void AttemptToDash()

@@ -62,7 +62,11 @@ public class Stamina : MonoBehaviour
     {
         if (currStamina - STAMINA_COST >= 0)
             return true;
-        else return false;
+        else
+        {
+            AudioManager.Instance.Play("NoStamina");
+            return false;
+        }
     }
     private IEnumerator Recharge()
     {

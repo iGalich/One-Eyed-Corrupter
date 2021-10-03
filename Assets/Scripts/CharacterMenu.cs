@@ -17,10 +17,15 @@ public class CharacterMenu : MonoBehaviour
 
     private bool menuIsOpen;
 
+    public bool MenuIsOpen => menuIsOpen;
     private void Update()
     {
         if (GameManager.instance.IsInventoryClickable() && menuIsOpen)
             GameManager.instance.CanClickInvetnory(false);
+    }
+    public void HideInventory()
+    {
+        GetComponent<Animator>().SetTrigger("Hide");
     }
     // character selection
     public void OnArrowClick (bool right)

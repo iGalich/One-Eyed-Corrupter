@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject vCam;
     public GameObject hud;
-    public GameObject menu;
+    public CharacterMenu menu;
     public GameObject dialogue;
     public GameObject playerAfterImagePool;
     public GameObject audioManager;
@@ -63,8 +63,8 @@ public class GameManager : MonoBehaviour
 
         if (hud.activeSelf == false)
             hud.SetActive(true);
-        if (menu.activeSelf == false)
-            menu.SetActive(true);
+        if (menu.gameObject.activeSelf == false)
+            menu.gameObject.SetActive(true);
         if (dialogue.activeSelf == false)
             dialogue.SetActive(true);
 
@@ -122,6 +122,13 @@ public class GameManager : MonoBehaviour
         }
 
         return false;
+    }
+    private void CheckIfWeaponUpgradeable()
+    {
+        if (weaponPrices.Count <= weapon.weaponLevel)
+            return;
+        if (pesos >= weaponPrices[weapon.weaponLevel])
+            ShowText("I've got enough pesos to upgrade my blade", 30, Color.white, player.transform.position - new Vector3(0, 0.16f, 0), Vector3.up * 25, 4.5f);
     }
 
     //hitpoint bar
@@ -212,6 +219,7 @@ public class GameManager : MonoBehaviour
             pesos += pesosAmount;
             ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
             AudioManager.Instance.Play("GotPesos");
+            CheckIfWeaponUpgradeable();
         }
         else if (pesosAmount < 0)
         {
