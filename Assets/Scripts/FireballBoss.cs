@@ -62,7 +62,7 @@ public class FireballBoss : Enemy
                                                                     Mathf.Sin(Time.time * fireballSpeed[i] / modifier) * distance,
                                                                     0);
         }
-        if (!activeMissleExists && fireballCount == 0 && Time.time - lastMissle > missleCooldown)
+        if (!activeMissleExists && (fireballCount == 0 || hitpoint < maxHitpoint / 2) && Time.time - lastMissle > missleCooldown)
         {
             FireMissle();
         }
@@ -107,7 +107,7 @@ public class FireballBoss : Enemy
     public void DecreaseFireballCount()
     {
         fireballCount--;
-        if (fireballCount == 0) 
+        if (fireballCount == 0 || hitpoint < maxHitpoint / 2) 
             lastMissle = Time.time; //instead of creating another variable for last fireball death, to give player time before missle start firing
     }
     public void FireMissle()
@@ -147,9 +147,11 @@ public class FireballBoss : Enemy
     }
     protected override void Death()
     {
+        var currPosition = transform.position;
         deathParticles.GetComponent<ParticleSystem>().Play();
         deathTime = Time.time;
         gameObject.transform.position += Vector3.up * 10000;
+        deathParticles.GetComponent<ParticleSystem>().transform.position = currPosition;
         moveSpeed = 0;
         isDead = true;
         int xp = CalculateExperinceWorth();

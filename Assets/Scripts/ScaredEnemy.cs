@@ -17,6 +17,8 @@ public class ScaredEnemy : Enemy
 
     private bool isAlive = true;
 
+    private float runAwayRange = 25f;
+
     protected override void Start()
     {
         base.Start();
@@ -50,20 +52,15 @@ public class ScaredEnemy : Enemy
             {
                 GameManager.instance.weapon.TimeStop();
             }
-
-            if (rb != null)
-            {
-                ApplyKnockback(pushDirection);
-            }
         }
 
         // When hit, will run in sudden random direction, to avoid player abusing corners
         if (hitpoint > 0)
         {
-            var x = new RandomFloat().NextFloat(-1f, 1f);
-            var y = new RandomFloat().NextFloat(-1f, 1f);
-            var direction = new Vector3(x, y, 0f);
-            ApplyKnockback(direction);
+            var x = new RandomFloat().NextFloat(-runAwayRange, runAwayRange);
+            var y = new RandomFloat().NextFloat(-runAwayRange, runAwayRange);
+            var direction = new Vector2(x, y);
+            rb.AddForce(direction);
         }
 
         if (hitpoint <= 0)
