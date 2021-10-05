@@ -78,6 +78,37 @@ public class AudioManager : MonoBehaviour
 
         s.source.Play();
     }
+    public void Play (string name, Vector3 position)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name.Equals(name));
+
+        if (s == null)
+        {
+            Debug.LogWarning("Sound: " + name + " was not found. Please check typo :)");
+            return;
+        }
+
+        if (name.Equals(GetCurrentlyPlaying()))
+            return;
+
+        if (!name.Equals(GetCurrentlyPlaying()) && s.isMusic && GetCurrentlyPlaying() != null)
+        {
+            Mute(GetCurrentlyPlaying());
+        }
+
+        if (s.isMusic)
+            currentlyPlaying = name;
+
+        if (s.isCommonSFX)
+        {
+            s.source.pitch = new RandomFloat().NextFloat(minPitch, maxPitch);
+        }
+
+        if (s.spatialBlend3D)
+            AudioManager.Instance.transform.position = position;
+
+        s.source.Play();
+    }
     public void Mute (string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name.Equals(name));

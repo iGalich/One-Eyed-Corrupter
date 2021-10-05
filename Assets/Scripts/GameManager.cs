@@ -290,7 +290,7 @@ public class GameManager : MonoBehaviour
                 break;
             case 2: AudioManager.Instance.Play("RegularLevel");
                 break;
-            case 3: AudioManager.Instance.Play("BossLevel");
+            case 3: AudioManager.Instance.Mute(AudioManager.Instance.GetCurrentlyPlaying());
                 break;
             default: Debug.Log("No music is playing!!!");
                 break;

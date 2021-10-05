@@ -33,6 +33,7 @@ public class Player : Mover
     private bool graceHit;
     private bool graceHitUsed;
     private bool healSfxPlayed;
+    private bool canMove = true;
 
     private float lastHeal;
     private float dashTimeLeft;
@@ -44,6 +45,7 @@ public class Player : Mover
     private int maxHitpointIncreasePerLevel = 3;
     private int healthRestoreOnLevelUp = 5;
 
+    public bool CanMove { get => canMove;  set => canMove = value; }
     public bool IsAlive => isAlive;
     public int HealthRestoreOnLevelUp => healthRestoreOnLevelUp;
     public int MaxHitPointIncreasePerLevel => maxHitpointIncreasePerLevel;
@@ -82,7 +84,7 @@ public class Player : Mover
             Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
 
         // dash button
-        if (Input.GetKeyDown(KeyCode.LeftShift) && isAlive)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isAlive && canMove)
         {
             if (Time.time >= lastDash + dashCooldown)
                 AttemptToDash();
@@ -105,7 +107,7 @@ public class Player : Mover
 
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
-        if (isAlive)
+        if (isAlive && canMove)
         { 
             UpdateMotor(new Vector3(x, y, 0).normalized);
         }
@@ -304,6 +306,8 @@ public class Player : Mover
             hitpoint = maxHitpoint;
         GameManager.instance.ShowText("+" + healingAmount.ToString() + " hp", 30, Color.green, transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 30, 1.0f);
         GameManager.instance.OnHitpointChange();
+        graceHitUsed = false;
+        graceHit = false;
     }
     private void AutoHeal()
     {

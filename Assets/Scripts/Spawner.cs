@@ -12,7 +12,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float waterBlobChance = 35f;
     [SerializeField] private float goldenBlobChance = 5f;
 
-    private float range = 1f;
+    private float range = 0.75f;
 
     private bool enteredOnce;
 
@@ -30,7 +30,7 @@ public class Spawner : MonoBehaviour
                 Vector3 pos = this.transform.position + new Vector3(Random.Range(-range, range), Random.Range(-range, range), 0f);
                 goldenBlobParticles.transform.position = pos;
                 goldenBlobParticles.GetComponent<ParticleSystem>().Play();
-                AudioManager.Instance.Play("GoldenBlobSpawn");
+                AudioManager.Instance.Play("GoldenBlobSpawn", pos);
                 Instantiate(goldenBlob, pos, Quaternion.identity);
             }
 
@@ -40,7 +40,7 @@ public class Spawner : MonoBehaviour
                 Vector3 pos = this.transform.position + new Vector3(Random.Range(-range, range), Random.Range(-range, range), 0f);
                 waterBlobParticles.transform.position = pos;
                 waterBlobParticles.GetComponent<ParticleSystem>().Play();
-                AudioManager.Instance.Play("WaterBlobSpawn");
+                AudioManager.Instance.Play("WaterBlobSpawn", pos);
                 Instantiate(waterBlob, pos, Quaternion.identity);
             }
 

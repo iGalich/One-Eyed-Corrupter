@@ -28,10 +28,12 @@ public class FireballBoss : Enemy
     private float deathTime;
     private float deathParticlesCooldown = 1.5f;
 
+    private bool canMove = false;
     private bool activeMissleExists = false;
     private bool speedHasIncreased = false;
     private bool isDead = false;
 
+    public bool CanMove { get => canMove; set => canMove = value; }
     protected override void Start()
     {
         base.Start();
@@ -82,6 +84,11 @@ public class FireballBoss : Enemy
                     continue;
             }
         }
+    }
+    protected override void UpdateMotor(Vector3 input)
+    {
+        if (canMove)
+            base.UpdateMotor(input);
     }
     private void SyncBar()
     {
