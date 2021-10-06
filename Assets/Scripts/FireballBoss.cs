@@ -37,8 +37,7 @@ public class FireballBoss : Enemy
     protected override void Start()
     {
         base.Start();
-        hpBarFront = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/Health").GetComponent<RectTransform>();
-        hpBarBack = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/DecayingHealthBar").GetComponent<RectTransform>();
+        
         //fireballCount = fireballs.Length;
 
         foreach (Transform child in transform)
@@ -53,7 +52,13 @@ public class FireballBoss : Enemy
     {
         base.Update();
 
-        SyncBar();
+        if (canMove)
+        {
+            hpBarFront = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/Health").GetComponent<RectTransform>();
+            hpBarBack = GameObject.Find("HUD/BossHealthBarCanvas/BossHealthBarUnder/DecayingHealthBar").GetComponent<RectTransform>();
+        }
+        if (canMove)
+            SyncBar();
 
         for (int i = 0; i < bossFireBalls.Count; i++)
         {
