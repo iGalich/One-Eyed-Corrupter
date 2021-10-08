@@ -126,7 +126,7 @@ public class Weapon : Collidable
     }
     private void Swing()
     {
-        if (!GameManager.instance.menu.MenuIsOpen)
+        if (!GameManager.instance.menu.MenuIsOpen && GameManager.instance.player.CanMove)
         {
             GameManager.instance.menu.HideInventory();
             anim.SetTrigger("Swing");

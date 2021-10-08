@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
     public GameObject audioManager;
     public GameObject stamina;
 
+    private PesosUI pesosUI;
+
     [SerializeField] private Button inventoryButton;
 
     // logic
@@ -78,6 +80,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         inventoryMenuAnim = GameObject.Find("Menu").GetComponent<Animator>();
+        pesosUI = GameObject.Find("HUD/PesosAmount").GetComponent<PesosUI>();
+        weapon.SetWeaponLevel(0);
+        Spawner.RoomCount = 0;
     }
     private void Update()
     {
@@ -117,6 +122,7 @@ public class GameManager : MonoBehaviour
         if (pesos >= weaponPrices[weapon.weaponLevel])
         {
             pesos -= weaponPrices[weapon.weaponLevel];
+            pesosUI.UpdatePesos();
             weapon.UpgradeWeapon();
             return true;
         }
@@ -220,11 +226,13 @@ public class GameManager : MonoBehaviour
             ShowText("+" + pesosAmount + " pesos!", 30, Color.yellow, player.transform.position, Vector3.up * 25, 1.5f);
             AudioManager.Instance.Play("GotPesos");
             CheckIfWeaponUpgradeable();
+            pesosUI.UpdatePesos();
         }
         else if (pesosAmount < 0)
         {
             pesos += pesosAmount;
             ShowText(pesosAmount + " pesos", 30, Color.red, player.transform.position - new Vector3(0 ,0.16f, 0) , Vector3.up * 25, 2.5f);
+            pesosUI.UpdatePesos();
         }
     }
     public void SetPesos(int pesosAmount)
@@ -291,6 +299,14 @@ public class GameManager : MonoBehaviour
             case 2: AudioManager.Instance.Play("RegularLevel");
                 break;
             case 3: AudioManager.Instance.Mute(AudioManager.Instance.GetCurrentlyPlaying());
+                break;
+            case 4: 
+                AudioManager.Instance.Play("RegularLevel");
+                AudioManager.Instance.ChangeVolume(0f, 0f);
+                AudioManager.Instance.ChangePitch(-1f, 0f);
+                AudioManager.Instance.ChangeVolume(0.5f, 10f);
+                hud.gameObject.SetActive(false);
+                player.CanMove = false;
                 break;
             default: Debug.Log("No music is playing!!!");
                 break;

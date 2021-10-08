@@ -16,10 +16,12 @@ public class AudioManager : MonoBehaviour
     private float maxPitch = 1.6f;
 
     private Coroutine pitchCoroutine;
+    private Coroutine volumeCoroutine;
 
     private WaitForSecondsRealtime tick = new WaitForSecondsRealtime(0.1f);
 
     private float CurrPitch => FindSound(GetCurrentlyPlaying()).source.pitch;
+    private float CurrVolume => FindSound(GetCurrentlyPlaying()).source.volume;
     private void Awake()
     {
         Instance = this;
@@ -60,7 +62,7 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        if (name.Equals(GetCurrentlyPlaying()))
+        if (name.Equals(GetCurrentlyPlaying()) && !name.Equals("RegularLevel"))
             return;
 
         if (!name.Equals(GetCurrentlyPlaying()) && s.isMusic && GetCurrentlyPlaying() != null)
@@ -148,27 +150,6 @@ public class AudioManager : MonoBehaviour
             progress += Time.unscaledDeltaTime * invDuration;
             yield return null;
         }
-
-        //if (s.source.pitch >= p)
-        //{
-        //    while (s.source.pitch > p)
-        //    {
-        //        s.source.pitch -= pitchChangePerTick;
-        //        yield return tick;
-        //    }
-        //    if (s.source.pitch < p)
-        //        s.source.pitch = p;
-        //}
-        //else if (s.source.pitch <= p)
-        //{
-        //    while (s.source.pitch < p)
-        //    {
-        //        s.source.pitch += pitchChangePerTick;
-        //        yield return tick;
-        //    }
-        //    if (s.source.pitch > p)
-        //        s.source.pitch = p;
-        //}
     }
     private void SetPitch(float pitch)
     {
@@ -176,5 +157,36 @@ public class AudioManager : MonoBehaviour
             StopCoroutine(pitchCoroutine);
 
         FindSound(GetCurrentlyPlaying()).source.pitch = pitch;
+    }
+    private void SetVolume(float volume)
+    {
+        if (volumeCoroutine != null)
+            StopCoroutine(volumeCoroutine);
+
+        FindSound(GetCurrentlyPlaying()).source.volume = volume;
+    }
+    public void ChangeVolume(float target, float duration)
+    {
+        if (volumeCoroutine != null)
+            StopCoroutine(volumeCoroutine);
+
+        if (duration <= Mathf.Epsilon && duration > 0)
+            SetVolume(target);
+
+        volumeCoroutine = StartCoroutine(ChangeVolumeCo(target, duration));
+    }
+    private IEnumerator ChangeVolumeCo(float target, float duration)
+    {
+        float from = CurrVolume;
+        float invDuration = 1.0f / duration;
+
+        float progress = Time.unscaledDeltaTime * invDuration;
+
+        while (Mathf.Abs(CurrVolume - target) > 0.0f)
+        {
+            FindSound(GetCurrentlyPlaying()).source.volume = Mathf.Lerp(from, target, progress);
+            progress += Time.unscaledDeltaTime * invDuration;
+            yield return null;
+        }
     }
 }

@@ -21,6 +21,8 @@ public class FireballBoss : Enemy
     private RectTransform hpBarFront;
     private RectTransform hpBarBack;
 
+    private Animator bossHealthBarAnim;
+
     private int fireballCount;
 
     private float healthRatio;
@@ -47,6 +49,7 @@ public class FireballBoss : Enemy
         }
 
         fireballCount = bossFireBalls.Count;
+        bossHealthBarAnim = GameObject.Find("HUD/BossHealthBarCanvas").GetComponent<Animator>();
     }
     protected override void Update()
     {
@@ -169,6 +172,8 @@ public class FireballBoss : Enemy
         int xp = CalculateExperinceWorth();
         GameManager.instance.GrantXp(xp);
         GameManager.instance.ShowText("+" + xp + " xp", 35, Color.magenta, transform.position + new Vector3(0, 0.32f, 0), Vector3.up * 20, 2.0f);
+        bossHealthBarAnim.SetBool("Hide", true);
+        AudioManager.Instance.ChangeVolume(0f, 5f);
     }
     public bool CheckIsDead()
     {

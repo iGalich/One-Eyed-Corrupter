@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    private static int roomCount = 0;
+
     [SerializeField] private GameObject waterBlob;
     [SerializeField] private GameObject goldenBlob;
     [SerializeField] private GameObject waterBlobParticles;
@@ -16,6 +18,7 @@ public class Spawner : MonoBehaviour
 
     private bool enteredOnce;
 
+    public static int RoomCount {get => roomCount; set => roomCount = value;}
     private void Start()
     {
         waterBlobParticles.GetComponent<ParticleSystem>().Stop();
@@ -25,6 +28,11 @@ public class Spawner : MonoBehaviour
     {
         if (collision.name == "Player" && !enteredOnce)
         {
+            if (roomCount < 29 && !enteredOnce)
+                roomCount++;
+            else if (roomCount == 29 && !enteredOnce)
+                GameManager.instance.ShowText("I have explored this entire area.", 30, Color.white, collision.transform.position + new Vector3(0, 0.16f, 0), Vector3.up * 15, 5f);
+
             if (Random.value > (100 - goldenBlobChance) / 100f)
             {
                 Vector3 pos = this.transform.position + new Vector3(Random.Range(-range, range), Random.Range(-range, range), 0f);

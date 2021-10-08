@@ -31,9 +31,7 @@ public class BossCutscene : MonoBehaviour
         if (moveCamera)
             bossTextCanvas.localPosition = Vector3.Lerp(bossTextCanvas.localPosition, new Vector3(bossTextCanvas.localPosition.x, bossTextCanvas.localPosition.y, 100f), curve.Evaluate(textSpeed * Time.deltaTime));
         if (fireballBoss.CanMove)
-        {
             bossTextCanvas.localPosition = Vector3.Lerp(bossTextCanvas.localPosition, new Vector3(bossTextCanvas.localPosition.x, bossTextCanvas.localPosition.y, -125f), curve.Evaluate(textSpeed * Time.deltaTime * 2));
-        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
