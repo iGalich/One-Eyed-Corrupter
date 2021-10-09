@@ -30,4 +30,8 @@ public class Hammer : EnemyHitbox
         if (parentEnemy.hitpoint <= parentEnemy.maxHitpoint / 3)
             anim.SetFloat("SwingMultiplier", animationMultiplier);
     }
+    private void SwingSFX()
+    {
+        AudioManager.Instance.Play("HammerSwing");
+    }
 }

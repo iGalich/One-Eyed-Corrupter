@@ -74,11 +74,6 @@ public class Player : Mover
                 healSfxPlayed = false;
         }
 
-        // TODO remove before final build
-        // currently here for bug cases
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.R))
-            GameManager.instance.Respawn();
-
         // E button is used to interact with npcs
         if (Input.GetKeyDown(KeyCode.E) && !DialogueUI.IsOpen && isAlive && !inCombat)
             Interactable?.Interact(this); // if interactable != null, then interact.interact(this)
@@ -217,7 +212,6 @@ public class Player : Mover
     {
         while (hitpoint == 1)
         {
-            AudioManager.Instance.Play("Heartbeat");
             iTween.ShakePosition(entireHealthBar, Vector3.one * shakeAmount, 0.5f);
 
             yield return new WaitForSeconds(1.5f);
@@ -294,8 +288,8 @@ public class Player : Mover
     }
     public void SetLevel(int level)
     {
-        for (int i = 0; i < level; i++)
-            OnLevelUp();
+        //for (int i = 0; i < level; i++)
+        //    OnLevelUp();
     }
     public void Heal(int healingAmount)
     {
@@ -331,12 +325,16 @@ public class Player : Mover
     }
     public void Respawn()
     {
-        GameManager.instance.weapon.SetWeaponLevel(0);
-        GameManager.instance.SetXp(0);
-        GameManager.instance.SetPesos(0);
         isAlive = true;
         lastImmune = Time.time;
         pushDirection = Vector3.zero;
+        ResetStats();
+    }
+    public void ResetStats()
+    {
+        GameManager.instance.weapon.SetWeaponLevel(0);
+        GameManager.instance.SetXp(0);
+        GameManager.instance.SetPesos(0);
         maxHitpoint = minHitPoint;
         hitpoint = maxHitpoint;
         GameManager.instance.OnHitpointChange();

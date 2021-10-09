@@ -82,7 +82,6 @@ public class GameManager : MonoBehaviour
         inventoryMenuAnim = GameObject.Find("Menu").GetComponent<Animator>();
         pesosUI = GameObject.Find("HUD/PesosAmount").GetComponent<PesosUI>();
         weapon.SetWeaponLevel(0);
-        Spawner.RoomCount = 0;
     }
     private void Update()
     {
@@ -294,7 +293,9 @@ public class GameManager : MonoBehaviour
     {
         switch (SceneManager.GetActiveScene().buildIndex)
         {
-            case 1: AudioManager.Instance.Play("TutorialLevel");
+            case 1: 
+                AudioManager.Instance.Play("TutorialLevel");
+                player.ResetStats();
                 break;
             case 2: AudioManager.Instance.Play("RegularLevel");
                 break;
